@@ -10,7 +10,9 @@
                 <ul class="memoListArea">
                     <!-- :data-selected="index == selectedIndex" メモのindexが現在選択されているものと一致した場合には動的にdata-selected="true"という属性がつくようになる -->
                     <li v-for="(memo, index) in memos" @click="selectMemo(index)">
-                        <p :data-selected="ind4x == selectedIndex">{{ displayTitle(memo.markdown) }}</p>
+                        <!-- <p :data-selected="index == selectedIndex">{{ displayTitle(memo.markdown) }}</p> -->
+                        <p v-if="memo.markdown" :data-selected="index == selectedIndex">{{ displayTitle(memo.markdown) }}</p>
+                        <p v-if="!memo.markdown" :data-selected="index == selectedIndex">no text</p>
                     </li>
                 </ul>
                 <ul class="controlArea">
@@ -30,7 +32,7 @@
                 
                 <div class="writeAreaWrap col-md-4">
                     <h2 class="areaTitle">記述エリア</h2>
-                    <textarea class="writeArea" v-model="memos[selectedIndex].markdown"></textarea>
+                    <textarea class="writeArea" v-model="memos[selectedIndex].markdown" ref="markdown"></textarea>
                 </div>
                 <!-- v-htmlで指定されたpreview()関数の実行結果がHTMLとして描画される XSSの原因になるのでユーザー間で共有するようなものを作る場合は注意 -->
                 <div class="previewAreaWrap col-md-4">
@@ -44,8 +46,8 @@
 
 <script>
 //npmでインストールしたマークダウン書式 → HTML変換してくれるnpmモジュールのmarkedを import 登録したい名前 from '読み込みたいモジュール名' これで登録して読み込む
-import marked from 'marked';
-// import markdown from '../lib/markdown';
+// import marked from 'marked';
+import markdown from '../lib/markdown';
 import sampleMarkdown from '../assets/sample';
 
 
@@ -83,11 +85,13 @@ export default {
             //はじめて作成された時は結果がnullなのでif文で追加データがあった場合のみにmemosを上書きする
             if(result.val()){
                 this.memos = result.val();
+                this.focusMemo();
             }
         });
     },
     //ライフサイクルフック コンポーネントの描画完了時
-    mounted: function(){ 
+    mounted: function(){
+        this.focusMemo(); 
         document.onkeydown = e => {
             // 関数内のeはキーボードの押下されたイベント自体で、そのイベントの.metaKeyでControlキーが押されているかチェック、e.keyで同時にsキーも押されているかチェックしている。
             if(e.key == 's' && e.metaKey){
@@ -108,45 +112,63 @@ export default {
         // 配列の最後にデータが追加される
         addMemo: function(){
             this.memos.push({
-                markdown: "無題のメモ"
+                markdown: ""
+            });
+            this.selectedIndex = this.memos.length - 1;
+            this.focusMemo();
+        },
+        deleteMemo: function(){
+            const title = this.displayTitle(this.memos[this.selectedIndex].markdown);
+                if(confirm(title + 'を削除します')) {
+                    // splice 配列の任意の位置からデータを取り出す（削除） splice(選択されているインデックス番号,1つの要素を取り出す)
+                    this.memos.splice(this.selectedIndex,1);
+                    // もし選択されているインデックス番号が0よりも大きかったら
+                    if (this.selectedIndex > 0) {
+                        // 選択されているインデックス番号から1マイナスする
+                        this.selectedIndex--;
+                    }
+                }
+        },
+        saveMemos: function(){
+            if (this.isSaving){
+                return;
+            }
+            this.isSaving = true;
+            firebase
+                .database()
+                .ref('memos/' + this.user.uid)
+                .set(this.memos)
+                .then(res => {
+                    this.isSaving = false;
             });
         },
         // 発火された（この場合クリック）配列のindex番号を取得してselectedIndexに代入
         selectMemo: function(index){
             this.selectedIndex = index;
+            this.focusMemo();
+        },
+        focusMemo: function(){
+            this.$nextTick(() => {
+                const markdownDom = this.$refs.markdown;
+                markdownDom.focus();
+                markdownDom.scrollTop = markdownDom.getClientRects()[0].height;
+            });
         },
         preview: function(){
-            return marked(this.memos[this.selectedIndex].markdown);
+            return markdown(this.memos[this.selectedIndex].markdown);
         },
+        displayTitle: function(text) {
+            return text.split(/\n/)[0].replace(/#\s/, '');     
+        }
         //メモのタイトル（メモの1行目の文章） 改行箇所で分割して配列にする。その配列のはじめの値(インデックス番号 0)を返却する
-        displayTitle: function(text){
-            return text.split(/\n/)[0].replace(/#+\s/, '') || 'no text';;
-        },
-        deleteMemo: function(){
-                // splice 配列の任意の位置からデータを取り出す（削除） splice(選択されているインデックス番号,1つの要素を取り出す)
-                this.memos.splice(this.selectedIndex, 1);
-                // もし選択されているインデックス番号が0よりも大きかったら
-                if(this.selectedIndex > 0){
-                    // 選択されているインデックス番号から1マイナスする
-                    this.selectedIndex--;
-                }
-        },
+        // displayTitle: function(text){
+        //     return text.split(/\n/)[0].replace(/#+\s/, '') || 'no text';;
+        // },
+        
         // firebaseに対して.dataabase()を実行してデータベースに接続
         // .ref('memos/' + this.user.uid)　で データを格納するパスを指定
         // .set(this.memos);　で指定したパスへデータを保存する
-        saveMemos: function(){
-            if (this.isSaving){
-                return;
-            }
-            this.isSaving =
-            firebase
-            .database()
-            .ref('memos/' + this.user.uid)
-            .set(this.memos)
-            .then(res => {
-                this.isSaving = false;
-            });
-        }
+        
     }
 };
 </script>
