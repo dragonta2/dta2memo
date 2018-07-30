@@ -66,8 +66,9 @@
             <dt>第13条（準拠法・裁判管轄）</dt>
             <dd>本規約の解釈にあたっては，日本法を準拠法とします。
             本サービスに関して紛争が生じた場合には，当社の本店所在地を管轄する裁判所を専属的合意管轄とします。
-            以上</dd>
+            </dd>
         </dl>
+        <p>以上</p>
         
         <p class="returnTop">
             <router-link v-bind:to="{ name: 'top' }">TOPに戻る</router-link>
@@ -98,7 +99,8 @@
     }
     .returnTop {
         text-align: center;
-        margin: 2rem;
+        font-size: 1.8rem;
+        margin: 3rem;
     }
 }
 
