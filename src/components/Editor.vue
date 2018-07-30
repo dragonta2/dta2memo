@@ -5,7 +5,7 @@
         <p class="name">ユーザーネーム：{{ user.displayName }}</p>
         <p class="logOut"><button class="btn btn-outline-warning" @click="logout">ログアウト</button></p>
         <div class="row">
-            <div class="listAreaWrap col-md-4">
+            <div class="listAreaWrap col-lg-4">
                 <h2 class="areaTitle">メモのリスト</h2>
                 <ul class="memoListArea">
                     <!-- :data-selected="index == selectedIndex" メモのindexが現在選択されているものと一致した場合には動的にdata-selected="true"という属性がつくようになる -->
@@ -18,6 +18,11 @@
                     <li>
                         <button class="addMemoBtn btn btn-outline-info" @click="addMemo">メモの追加</button>
                     </li>
+
+                    <li>
+                        <button class="saveMemoBtn btn btn-outline-info" v-on:click="saveMemos">メモの保存</button>
+                    </li>
+
                     <!-- リストの数が2つ以上あってマークダウン記法サンプル以外が選択されている場合 -->
                     <!-- <li v-if="memos.length > 1 && !this.selectedIndex == 0">
                         <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
@@ -38,22 +43,18 @@
 
                     <!-- マークダウン記法サンプルが選択されている場合以外は削除ボタンを表示 -->
                     <li v-if="!this.selectedIndex == 0">
-                        <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
-                    </li>
-
-                    <li>
-                        <button class="saveMemoBtn btn btn-outline-info" v-on:click="saveMemos">メモの保存</button>
+                        <button class="deleteMemoBtn btn btn-outline-danger" v-on:click="deleteMemo">選択中のメモの削除</button>
                     </li>
                 </ul>
             </div>
 
                 <!-- v-modelでinputやtextareaの状態をコンポーネントのデータmarkdownの中へ格納する データバインディング -->
-                <div class="writeAreaWrap col-md-4">
+                <div class="writeAreaWrap col-lg-4">
                     <h2 class="areaTitle">記述エリア</h2>
                     <textarea class="writeArea" v-model="memos[selectedIndex].markdown" ref="markdown"></textarea>
                 </div>
                 <!-- v-htmlで指定されたpreview()関数の実行結果がHTMLとして描画される XSSの原因になるのでユーザー間で共有するようなものを作る場合は注意 -->
-                <div class="previewAreaWrap col-md-4">
+                <div class="previewAreaWrap col-lg-4">
                     <h2 class="areaTitle">プレビューエリア</h2>
                     <div class="previewArea markdown-body" v-html="preview()"></div>
                 </div>
@@ -133,7 +134,7 @@ export default {
             this.memos.push({
                 markdown: ""
             });
-            
+
             this.selectedIndex = this.memos.length - 1;
             this.focusMemo();
         },
@@ -296,7 +297,7 @@ export default {
 }
 
 /* Extra small devices: Phones (<768px) */
-@media (max-width: 767px) {
+@media (max-width: 991px) {
     .controlArea {
         li {
             margin-left: 0;
@@ -304,13 +305,13 @@ export default {
         }
     }
     .writeAreaWrap {
-        margin-top: 1.5rem;
+        margin-top: 2rem;
         .writeArea {
             height: 300px;
         }
     }
     .previewAreaWrap {
-        margin-top: 1.5rem;
+        margin-top: 2rem;
         .previewArea {
             height: 300px;
         }
