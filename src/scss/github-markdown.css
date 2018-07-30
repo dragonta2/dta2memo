@@ -701,8 +701,12 @@ ta2追記 180721
 
 .markdown-body ul li {
     list-style-type: disc;
+    display: list-item;
+    margin: 0 0 .5rem;
 }
 
 .markdown-body ol li {
     list-style-type: decimal;
+    display: list-item;
+    margin: 0 0 .5rem;
 }
