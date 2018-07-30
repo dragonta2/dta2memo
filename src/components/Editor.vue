@@ -10,18 +10,37 @@
                 <ul class="memoListArea">
                     <!-- :data-selected="index == selectedIndex" メモのindexが現在選択されているものと一致した場合には動的にdata-selected="true"という属性がつくようになる -->
                     <li v-for="(memo, index) in memos" @click="selectMemo(index)">
-                        <!-- <p :data-selected="index == selectedIndex">{{ displayTitle(memo.markdown) }}</p> -->
-                        <p v-if="memo.markdown" :data-selected="index == selectedIndex">{{ displayTitle(memo.markdown) }}</p>
-                        <p v-if="!memo.markdown" :data-selected="index == selectedIndex">no text</p>
+                        <p v-if="memo.markdown" :data-selected="index == selectedIndex">{{ displayTitle(memo.markdown)}}</p>
+                        <p v-if="!memo.markdown" :data-selected="index == selectedIndex">{{ displayNonTitle(memo.markdown) }}</p>
                     </li>
                 </ul>
                 <ul class="controlArea">
                     <li>
                         <button class="addMemoBtn btn btn-outline-info" @click="addMemo">メモの追加</button>
                     </li>
-                    <li>
-                        <button class="deleteMemoBtn btn btn-outline-info" v-if="memos.length > 1" @click="deleteMemo">選択中のメモの削除</button>
+                    <!-- リストの数が2つ以上あってマークダウン記法サンプル以外が選択されている場合 -->
+                    <!-- <li v-if="memos.length > 1 && !this.selectedIndex == 0">
+                        <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
+                    </li> -->
+                    <!-- リストの数が2つ以上あってマークダウン記法サンプルが選択されている場合 -->
+                    <!-- <li v-if="memos.length > 1 && this.selectedIndex == 0">
+                        <button class="deleteMemoBtn btn btn-outline-info">選択中のメモの削除はできません</button>
+                    </li> -->
+                    
+                    <!-- マークダウン記法サンプル以外が選択されている場合 -->
+                    <!-- <li v-if="!this.selectedIndex == 0">
+                        <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
+                    </li> -->
+                    <!-- マークダウン記法サンプルが選択されている場合 -->
+                    <!-- <li v-if="this.selectedIndex == 0">
+                        <button class="deleteMemoBtn btn btn-outline-info">記法サンプルは削除はできません</button>
+                    </li> -->
+
+                    <!-- マークダウン記法サンプルが選択されている場合以外は削除ボタンを表示 -->
+                    <li v-if="!this.selectedIndex == 0">
+                        <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
                     </li>
+
                     <li>
                         <button class="saveMemoBtn btn btn-outline-info" v-on:click="saveMemos">メモの保存</button>
                     </li>
@@ -29,7 +48,6 @@
             </div>
 
                 <!-- v-modelでinputやtextareaの状態をコンポーネントのデータmarkdownの中へ格納する データバインディング -->
-                
                 <div class="writeAreaWrap col-md-4">
                     <h2 class="areaTitle">記述エリア</h2>
                     <textarea class="writeArea" v-model="memos[selectedIndex].markdown" ref="markdown"></textarea>
@@ -68,6 +86,7 @@ export default {
             //編集・プレビューしているデータの配列番号（インデックス）が入る
             selectedIndex: 0,
             isSaving: false,
+            nonTitleText: "No TEXT"
         };
     },
     //ライフサイクルフック コンポーネント作成時に実行される
@@ -114,10 +133,11 @@ export default {
             this.memos.push({
                 markdown: ""
             });
+            
             this.selectedIndex = this.memos.length - 1;
             this.focusMemo();
         },
-        deleteMemo: function(){
+        /*deleteMemo: function(){
             const title = this.displayTitle(this.memos[this.selectedIndex].markdown);
                 if(confirm(title + 'を削除します')) {
                     // splice 配列の任意の位置からデータを取り出す（削除） splice(選択されているインデックス番号,1つの要素を取り出す)
@@ -126,8 +146,30 @@ export default {
                     if (this.selectedIndex > 0) {
                         // 選択されているインデックス番号から1マイナスする
                         this.selectedIndex--;
+                    }else if(this.selectedIndex == 0) {
+                        this.selectedIndex;
                     }
                 }
+        },*/
+        deleteMemo: function(){
+            const title = this.displayTitle(this.memos[this.selectedIndex].markdown);
+            const nonTitle = this.displayNonTitle();
+            
+            // マークダウン記法サンプルは削除しない
+            if(!this.selectedIndex == 0){
+                if(confirm(
+                    (title || nonTitle) + 'を削除しますか？'
+                )){
+                    // splice 配列の任意の位置からデータを取り出す（削除） splice(選択されているインデックス番号,1つの要素を取り出す)
+                    this.memos.splice(this.selectedIndex,1);
+                    this.selectedIndex--;
+                    // もし選択されているインデックス番号が0よりも大きかったら
+                    // if (this.selectedIndex > 0) {
+                    //     // 選択されているインデックス番号から1マイナスする
+                    //     this.selectedIndex--;
+                    // }
+                }
+            }
         },
         saveMemos: function(){
             if (this.isSaving){
@@ -158,7 +200,10 @@ export default {
             return markdown(this.memos[this.selectedIndex].markdown);
         },
         displayTitle: function(text) {
-            return text.split(/\n/)[0].replace(/#\s/, '');     
+            return text.split(/\n/)[0].replace(/#+\s|-\s/, '');
+        },
+        displayNonTitle: function(text) {
+            return this.nonTitleText;
         }
         //メモのタイトル（メモの1行目の文章） 改行箇所で分割して配列にする。その配列のはじめの値(インデックス番号 0)を返却する
         // displayTitle: function(text){
@@ -179,8 +224,10 @@ export default {
     font-size: 1.8rem;
 }
 .logOut {
-    margin: 1.8rem 0;
+    margin: 2.8rem 0 3.6rem;
     button {
+        font-size: 2rem;
+        padding: .8rem 1.2rem;
         &:hover {
             color: #fff;
         }
@@ -211,15 +258,15 @@ export default {
         }
     }
     .controlArea {
-        margin-top: 1.5rem;
+        // margin-top: 1.5rem;
         li {
-            margin: 1rem 0 0;
+            margin: 1.5rem 0 0;
             width: 100%;
             padding: 0 1rem;
             .btn {
                 width: 100%;
-                padding: 1rem .5rem 1rem
-            } 
+                padding: 1rem .5rem;
+            }
         }
     }
 }
@@ -259,13 +306,13 @@ export default {
     .writeAreaWrap {
         margin-top: 1.5rem;
         .writeArea {
-            
+            height: 300px;
         }
     }
     .previewAreaWrap {
         margin-top: 1.5rem;
         .previewArea {
-            
+            height: 300px;
         }
     }
 
