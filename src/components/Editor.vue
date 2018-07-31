@@ -2,8 +2,12 @@
     <div class="editor">
         <h1>エディター画面</h1>
         <!-- googleアカウント userデータ内のdisplayNameというキーに格納されたログイン名を取得 -->
-        <p class="name">ユーザーネーム：{{ user.displayName }}</p>
-        <p class="logOut"><button class="btn btn-outline-warning" @click="logout">ログアウト</button></p>
+        <div class="row flex-row justify-content-end">
+            <p class="name col-3 align-self-center">メモとじる</p>
+            <p class="name col-3 align-self-center">記述エリア 　とじる</p>
+            <p class="name col-3 align-self-center">ユーザーネーム：{{ user.displayName }}</p>
+            <p class="logOut col-2"><button class="btn btn-outline-warning" @click="logout">ログアウト</button></p>
+        </div>
         <div class="row">
             <div class="listAreaWrap col-lg-4">
                 <h2 class="areaTitle">メモのリスト</h2>
@@ -24,9 +28,9 @@
                     </li>
 
                     <!-- リストの数が2つ以上あってマークダウン記法サンプル以外が選択されている場合 -->
-                    <!-- <li v-if="memos.length > 1 && !this.selectedIndex == 0">
+                    <li v-if="memos.length > 1 && !this.selectedIndex == 0">
                         <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
-                    </li> -->
+                    </li>
                     <!-- リストの数が2つ以上あってマークダウン記法サンプルが選択されている場合 -->
                     <!-- <li v-if="memos.length > 1 && this.selectedIndex == 0">
                         <button class="deleteMemoBtn btn btn-outline-info">選択中のメモの削除はできません</button>
