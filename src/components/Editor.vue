@@ -2,64 +2,101 @@
     <div class="editor">
         <h1>エディター画面</h1>
         <!-- googleアカウント userデータ内のdisplayNameというキーに格納されたログイン名を取得 -->
-        <p class="name">ユーザーネーム：{{ user.displayName }}</p>
-        <p class="logOut"><button class="btn btn-outline-warning" @click="logout">ログアウト</button></p>
-        <div class="row">
-            <div class="listAreaWrap col-lg-4">
-                <h2 class="areaTitle">メモのリスト</h2>
-                <ul class="memoListArea">
-                    <!-- :data-selected="index == selectedIndex" メモのindexが現在選択されているものと一致した場合には動的にdata-selected="true"という属性がつくようになる -->
-                    <li v-for="(memo, index) in memos" @click="selectMemo(index)">
-                        <p v-if="memo.markdown" :data-selected="index == selectedIndex">{{ displayTitle(memo.markdown)}}</p>
-                        <p v-if="!memo.markdown" :data-selected="index == selectedIndex">{{ displayNonTitle(memo.markdown) }}</p>
-                    </li>
-                </ul>
-                <ul class="controlArea">
-                    <li>
-                        <button class="addMemoBtn btn btn-outline-info" @click="addMemo">メモの追加</button>
-                    </li>
+        <div class="row flex-row justify-content-end">
+            <!-- <p v-on:click="showside = !showside">></p> -->
+            <p v-on:click="toggleWriteArea">記述エリア</p>｜
+            <p v-on:click="toggleSampleArea">サンプルエリア</p>
+            <p class="name col-3 align-self-center">ユーザーネーム：{{ user.displayName }}</p>
+            <p class="logOut col-2"><button class="btn btn-outline-warning" @click="logout">ログアウト</button></p>
+        </div>
 
-                    <li>
-                        <button class="saveMemoBtn btn btn-outline-info" v-on:click="saveMemos">メモの保存</button>
-                    </li>
+        <div class="org_list row">
+            <div class="org_controlAreaWrap">
+                <h2 class="org_areaTitle org_accordionHeader" v-on:click="toggleControlArea">メモのリスト
+                    <i class="fa fa-2x fa-angle-down org_icon" v-bind:class="{ rotate: showControlArea }"></i>
+                </h2>
+                <transition v-on:before-enter="onBeforeEnter" v-on:enter="onEnter" v-on:before-leave="onBeforeLeave" v-on:leave="onLeave">
+                    <div class="org_controlArea org_accordion" v-show="showControlArea">
+                        <ul class="org_memoListArea">
+                            <!-- :data-selected="index == selectedIndex" メモのindexが現在選択されているものと一致した場合には動的にdata-selected="true"という属性がつくようになる -->
+                            <li v-for="(memo, index) in memos" @click="selectMemo(index)">
+                                <p v-if="memo.markdown" :data-selected="index == selectedIndex">{{ displayTitle(memo.markdown)}}</p>
+                                <p v-if="!memo.markdown" :data-selected="index == selectedIndex">{{ displayNonTitle(memo.markdown) }}</p>
+                            </li>
+                        </ul>
+                        <ul class="org_btnArea">
+                            <li>
+                                <button class="org_addMemoBtn btn btn-outline-info" @click="addMemo">メモの追加</button>
+                            </li>
 
-                    <!-- リストの数が2つ以上あってマークダウン記法サンプル以外が選択されている場合 -->
-                    <!-- <li v-if="memos.length > 1 && !this.selectedIndex == 0">
-                        <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
-                    </li> -->
-                    <!-- リストの数が2つ以上あってマークダウン記法サンプルが選択されている場合 -->
-                    <!-- <li v-if="memos.length > 1 && this.selectedIndex == 0">
-                        <button class="deleteMemoBtn btn btn-outline-info">選択中のメモの削除はできません</button>
-                    </li> -->
-                    
-                    <!-- マークダウン記法サンプル以外が選択されている場合 -->
-                    <!-- <li v-if="!this.selectedIndex == 0">
-                        <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
-                    </li> -->
-                    <!-- マークダウン記法サンプルが選択されている場合 -->
-                    <!-- <li v-if="this.selectedIndex == 0">
-                        <button class="deleteMemoBtn btn btn-outline-info">記法サンプルは削除はできません</button>
-                    </li> -->
+                            <li>
+                                <button class="org_saveMemoBtn btn btn-outline-info" v-on:click="saveMemos">メモの保存</button>
+                            </li>
 
-                    <!-- マークダウン記法サンプルが選択されている場合以外は削除ボタンを表示 -->
-                    <li v-if="!this.selectedIndex == 0">
-                        <button class="deleteMemoBtn btn btn-outline-danger" v-on:click="deleteMemo">選択中のメモの削除</button>
-                    </li>
-                </ul>
-            </div>
+                            <!-- リストの数が2つ以上あってマークダウン記法サンプル以外が選択されている場合 -->
+                            <!-- <li v-if="memos.length > 1 && !this.selectedIndex == 0">
+                                <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
+                            </li> -->
+                            <!-- リストの数が2つ以上あってマークダウン記法サンプルが選択されている場合 -->
+                            <!-- <li v-if="memos.length > 1 && this.selectedIndex == 0">
+                                <button class="deleteMemoBtn btn btn-outline-info">選択中のメモの削除はできません</button>
+                            </li> -->
+                            
+                            <!-- マークダウン記法サンプル以外が選択されている場合 -->
+                            <!-- <li v-if="!this.selectedIndex == 0">
+                                <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
+                            </li> -->
+                            <!-- マークダウン記法サンプルが選択されている場合 -->
+                            <!-- <li v-if="this.selectedIndex == 0">
+                                <button class="deleteMemoBtn btn btn-outline-info">記法サンプルは削除はできません</button>
+                            </li> -->
 
-                <!-- v-modelでinputやtextareaの状態をコンポーネントのデータmarkdownの中へ格納する データバインディング -->
-                <div class="writeAreaWrap col-lg-4">
-                    <h2 class="areaTitle">記述エリア</h2>
-                    <textarea class="writeArea" v-model="memos[selectedIndex].markdown" ref="markdown"></textarea>
+                            <!-- マークダウン記法サンプルが選択されている場合以外は削除ボタンを表示 -->
+
+                            <li v-if="!this.selectedIndex == 0">
+                                <button class="org_deleteMemoBtn btn btn-outline-danger" v-on:click="deleteMemo">選択中のメモの削除</button>
+                            </li>
+                        </ul>
+                    </div>
+                </transition>
+            </div><!-- /.org_controlAreaWrap -->
+        </div><!-- /.org_list -->
+
+        <div class="org_memo row">
+            <!-- v-modelでinputやtextareaの状態をコンポーネントのデータmarkdownの中へ格納する データバインディング -->
+            <transition name="org_slide-fade">
+                <div class="org_writeAreaWrap col-lg-6" v-show="showWriteArea">
+                    <h2 class="org_areaTitle">記述エリア</h2>
+                    <textarea class="org_writeArea" v-model="memos[selectedIndex].markdown" ref="markdown"></textarea>
                 </div>
-                <!-- v-htmlで指定されたpreview()関数の実行結果がHTMLとして描画される XSSの原因になるのでユーザー間で共有するようなものを作る場合は注意 -->
-                <div class="previewAreaWrap col-lg-4">
-                    <h2 class="areaTitle">プレビューエリア</h2>
-                    <div class="previewArea markdown-body" v-html="preview()"></div>
-                </div>
+            </transition>
+
+            <!-- v-htmlで指定されたpreview()関数の実行結果がHTMLとして描画される XSSの原因になるのでユーザー間で共有するようなものを作る場合は注意 -->
+            <!-- 三項演算子でclassの付与を振り分け -->
+            <div class="org_previewAreaWrap" v-bind:class="[showWriteArea === true ?'col-lg-6' : 'col-lg-12']">
+                <h2 class="org_areaTitle">プレビューエリア</h2>
+                <div class="org_previewArea markdown-body" v-html="preview()"></div>
             </div>
         </div>
+
+        <div class="org_memoSample">
+            <!-- v-modelでinputやtextareaの状態をコンポーネントのデータmarkdownの中へ格納する データバインディング -->
+            <transition name="org_slide-fade-sample">
+                <div class="org_accordionSample row" v-show="showSampleArea">
+                    <div class="org_writeAreaWrap col-lg-6">
+                            <h2 class="org_areaTitle">マークダウンサンプル 記述エリア</h2>
+                            <textarea class="org_writeArea" v-model="memos[0].markdown" ref="markdown"></textarea>
+                    </div>
+                    <!-- v-htmlで指定されたpreview()関数の実行結果がHTMLとして描画される XSSの原因になるのでユーザー間で共有するようなものを作る場合は注意 -->
+                    <div class="org_previewAreaWrap col-lg-6">
+                        <h2 class="org_areaTitle">マークダウンサンプル プレビューエリア</h2>
+                        <div class="org_previewArea markdown-body" v-html="previewSample()"></div>
+                    </div><!-- /.org_previewAreaWrap -->
+                </div>
+            </transition>
+                
+        </div>
+
     </div>
 </template>
 
@@ -77,19 +114,23 @@ export default {
     //props:['user'] 親コンポーネントから受け継ぐデータを定義
     props: ['user'],
     
-    data () {
+    data: function() {
         return {
-            // メモを複数保存するための配列
-            memos:[
-                //markdownというキーにマークダウンで記述されたテキストが入る
-                { markdown: sampleMarkdown }
-            ],
-            //編集・プレビューしているデータの配列番号（インデックス）が入る
-            selectedIndex: 0,
-            isSaving: false,
-            nonTitleText: "No TEXT"
-        };
-    },
+             // メモを複数保存するための配列
+             memos:[
+                 // markdownというキーにマークダウンで記述されたテキストが入る
+                 { markdown: sampleMarkdown }
+             ],
+             // 編集・プレビューしているデータの配列番号（インデックス）が入る
+             selectedIndex: 0,
+             isSaving: false,
+             nonTitleText: "No TEXT",
+             // アコーディオン用
+             showControlArea: true,
+             showWriteArea: true,
+             showSampleArea: true,
+        }
+    }, 
     //ライフサイクルフック コンポーネント作成時に実行される
     created: function(){
         firebase
@@ -155,7 +196,7 @@ export default {
         deleteMemo: function(){
             const title = this.displayTitle(this.memos[this.selectedIndex].markdown);
             const nonTitle = this.displayNonTitle();
-            
+
             // マークダウン記法サンプルは削除しない
             if(!this.selectedIndex == 0){
                 if(confirm(
@@ -200,12 +241,15 @@ export default {
         preview: function(){
             return markdown(this.memos[this.selectedIndex].markdown);
         },
+        previewSample: function(){
+            return markdown(this.memos[0].markdown);
+        },
         displayTitle: function(text) {
             return text.split(/\n/)[0].replace(/#+\s|-\s/, '');
         },
         displayNonTitle: function(text) {
             return this.nonTitleText;
-        }
+        },
         //メモのタイトル（メモの1行目の文章） 改行箇所で分割して配列にする。その配列のはじめの値(インデックス番号 0)を返却する
         // displayTitle: function(text){
         //     return text.split(/\n/)[0].replace(/#+\s/, '') || 'no text';;
@@ -214,13 +258,46 @@ export default {
         // firebaseに対して.dataabase()を実行してデータベースに接続
         // .ref('memos/' + this.user.uid)　で データを格納するパスを指定
         // .set(this.memos);　で指定したパスへデータを保存する
-        
+
+        // アコーディオン controlArea用
+        toggleControlArea: function() {
+            this.showControlArea = !this.showControlArea;
+        },
+        // アコーディオン controlArea用 イベント発生前
+        onBeforeEnter: function(el) {
+            el.style.height = 0;
+        },
+        // アコーディオン controlArea用 イベント発生時
+        // el.scrollHeightで<transition>にラップされた部分（ここでは div.body）の高さを取得できる
+        onEnter: function(el) {
+            el.style.height = el.scrollHeight + 'px'
+        },
+        // アコーディオン controlArea用 イベント終了前
+        onBeforeLeave: function(el) {
+            el.style.height = el.scrollHeight + 'px'
+        },
+        // アコーディオン controlArea用 イベント終了時
+        onLeave: function(el) {
+            el.style.height = 0
+        },
+        // アコーディオン writeArea用
+        toggleWriteArea: function() {
+            this.showWriteArea = !this.showWriteArea;
+        },
+        // アコーディオン sampleArea用
+        toggleSampleArea: function() {
+            this.showSampleArea = !this.showSampleArea;
+        },
     }
 };
 </script>
 
 <!-- scopedをつけると自動的にhtmlの各タグに個別の属性値を割り当ててくれその属性値にのみCSSが効くようになる -->
 <style lang="scss" scoped>
+
+$areaHeight: 400px;
+$areaHeightSample: 1000px;
+
 .name {
     font-size: 1.8rem;
 }
@@ -235,124 +312,178 @@ export default {
     }
 }
 
-.listAreaWrap {
-    cursor: pointer;
-    .memoListArea {
-        margin: 0;
-        li {
+
+    .org_list {
+        margin-bottom: 3rem;
+    }
+
+    .org_controlAreaWrap {
+        cursor: pointer;
+        margin: 0 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px dotted #ddd;
+        width: 100%;
+        .org_accordionHeader {
+            height: 3rem;
+            display: flex;
+            justify-content: space-between;
             width: 100%;
-            border-bottom: 1px dotted #ddd;
+            .org_icon {
+                display: table-cell;
+                line-height: 3rem;
+                transform: rotate(0deg);
+                transition-duration: 0.3s;
+                &.rotate {
+                    transform: rotate(180deg);
+                    transition-duration: 0.3s;
+                }
+            }
+        }
+        .org_accordion {
+            margin-top: 1rem;
+            transition: 150ms ease-out;
+        }
+        .org_memoListArea {
             margin: 0;
-            text-align: left;
-            &:first-child {
-                border-top: 1px dotted #ddd;   
-            }
-            p {
-                border: 3px solid #fff;
-                padding: 1rem .6rem;
+            li {
                 width: 100%;
+                border-bottom: 1px dotted #ddd;
                 margin: 0;
-            }
-            p[data-selected="true"] {
-                border: 3px solid #d9d9d9;
+                text-align: left;
+                &:first-child {
+                    border-top: 1px dotted #ddd;   
+                }
+                p {
+                    border: 3px solid #fff;
+                    padding: .6rem;
+                    width: 100%;
+                    margin: 0;
+                    font-size: 1.3rem;
+                }
+                p[data-selected="true"] {
+                    border: 3px solid #d9d9d9;
+                }
             }
         }
-    }
-    .controlArea {
-        // margin-top: 1.5rem;
-        li {
-            margin: 1.5rem 0 0;
-            width: 100%;
-            padding: 0 1rem;
-            .btn {
+        .org_btnArea {
+            // margin-top: 1.5rem;
+            li {
+                margin: 1.5rem 0 0;
                 width: 100%;
-                padding: 1rem .5rem;
+                padding: 0 1rem;
+                .btn {
+                    width: 100%;
+                    padding: 1rem .5rem;
+                }
             }
         }
     }
-}
-.writeAreaWrap {
-    .writeArea {
-        width: 100%;
-        border: 1px dotted #ddd;
-        height: 500px;
-        padding: 1rem;
+
+.org_memo {
+        margin-top: 3rem;
+    
+    .org_writeAreaWrap {
+        .org_writeArea {
+            width: 100%;
+            border: 1px dotted #ddd;
+            height: $areaHeight;
+            padding: 1rem;
+        }
     }
-}
-.previewAreaWrap {
-    .previewArea {
-        width: 100%;
-        border: 1px solid #ddd;
-        height: 500px;
+    .org_previewAreaWrap {
+        .org_previewArea {
+            width: 100%;
+            border: 1px solid #ddd;
+            height: $areaHeight;
+            text-align: left;
+            padding: 1rem;
+            overflow: auto;
+        }
+    }
+    .org_areaTitle {
         text-align: left;
-        padding: 1rem;
-        overflow: auto;
+        font-size: 2.5rem;
+        padding: 0 .3rem .2rem;
     }
 }
 
-.areaTitle {
-    text-align: left;
-    font-size: 2.5rem;
-    padding: 0 .3rem .2rem;
+.org_memoSample {
+    margin-top: 3rem;
+    .org_writeAreaWrap {
+        .org_writeArea {
+            width: 100%;
+            border: 1px dotted #ddd;
+            height: $areaHeightSample;
+            padding: 1rem;
+        }
+    }
+    .org_previewAreaWrap {
+        .org_previewArea {
+            width: 100%;
+            border: 1px solid #ddd;
+            height: $areaHeightSample;
+            text-align: left;
+            padding: 1rem;
+            overflow: auto;
+        }
+    }
+    .org_areaTitle {
+        text-align: left;
+        font-size: 2.5rem;
+        padding: 0 .3rem .2rem;
+    }
 }
 
-/* Extra small devices: Phones (<768px) */
-@media (max-width: 991px) {
-    .controlArea {
-        li {
-            margin-left: 0;
-            margin-right: 0; 
-        }
+    .org_slide-fade-enter-active {
+      transition: all .3s ease;
     }
-    .writeAreaWrap {
-        margin-top: 2rem;
-        .writeArea {
-            height: 300px;
-        }
+    .org_slide-fade-leave-active {
+      transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
     }
-    .previewAreaWrap {
-        margin-top: 2rem;
-        .previewArea {
-            height: 300px;
+    .org_slide-fade-enter, 
+    .org_slide-fade-leave-to
+    /* .slide-fade-leave-active below version 2.1.8 */ {
+      transform: translateX(10px);
+      opacity: 0;
+    }
+
+    .org_slide-fade-sample-enter-active {
+      transition: all .3s ease;
+    }
+    .org_slide-fade--sample-leave-active {
+      transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    }
+    .org_slide-fade--sample-enter, 
+    .org_slide-fade--sample-leave-to
+    /* .slide-fade-leave-active below version 2.1.8 */ {
+      transform: translateX(10px);
+      opacity: 0;
+    }
+
+
+
+
+    /* Extra small devices: Phones (<768px) */
+    @media (max-width: 991px) {
+        .org_controlArea {
+            li {
+                margin-left: 0;
+                margin-right: 0; 
+            }
+        }
+        .org_writeAreaWrap {
+            margin-top: 2rem;
+            .org_writeArea {
+                height: 300px;
+            }
+        }
+        .org_previewAreaWrap {
+            margin-top: 2rem;
+            .org_previewArea {
+                height: 300px;
+            }
         }
     }
 
-}
+
 </style>
-
-
-<!-- <style lang="scss" scoped>
-.memoListWrapper {
-    width: 19%;
-    float: left;
-    border-top: 1px solid #000;
-}
-.memoList {
-    padding: 10px;
-    box-sizing: border-box;
-    border-bottom: 1px solid #000;
-    &:nth-child(even) {
-    }
-        background-color: #ccf;
-    }
-}
-    height: 1.5em;
-    margin: 0;
-    overflow: hidden;
-}
-.addMemoBtn {
-    margin-top: 20px;
-}
-.markdown,
-.preview {
-    float: left;
-    width: 40%;
-.markdown {
-}
-.preview {
-    text-align: left;
-}
-.deleteMemoBtn {
-    margin: 10px;
-}
-</style> -->
