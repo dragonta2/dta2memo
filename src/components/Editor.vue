@@ -1,11 +1,9 @@
 <template>
     <div class="editor">
-        <h1>エディター画面</h1>
-        <!-- googleアカウント userデータ内のdisplayNameというキーに格納されたログイン名を取得 -->
         <div class="row flex-row justify-content-end">
             <!-- <p v-on:click="showside = !showside">></p> -->
-            <p v-on:click="toggleWriteArea">記述エリア</p>｜
-            <p v-on:click="toggleSampleArea">サンプルエリア</p>
+            <h1>エディター画面</h1> 
+            <!-- googleアカウント userデータ内のdisplayNameというキーに格納されたログイン名を取得 -->
             <p class="name col-3 align-self-center">ユーザーネーム：{{ user.displayName }}</p>
             <p class="logOut col-2"><button class="btn btn-outline-warning" @click="logout">ログアウト</button></p>
         </div>
@@ -13,10 +11,10 @@
         <div class="org_list row">
             <div class="org_controlAreaWrap">
                 <h2 class="org_areaTitle org_accordionHeader" v-on:click="toggleControlArea">メモのリスト
-                    <i class="fa fa-2x fa-angle-down org_icon" v-bind:class="{ rotate: showControlArea }"></i>
+                    <i class="fa fa-lg fa-angle-down org_icon" v-bind:class="{ rotate: showControlArea }"></i>
                 </h2>
                 <transition v-on:before-enter="onBeforeEnter" v-on:enter="onEnter" v-on:before-leave="onBeforeLeave" v-on:leave="onLeave">
-                    <div class="org_controlArea org_accordion" v-show="showControlArea">
+                    <div class="org_controlArea org_accordionControlArea" v-show="showControlArea">
                         <ul class="org_memoListArea">
                             <!-- :data-selected="index == selectedIndex" メモのindexが現在選択されているものと一致した場合には動的にdata-selected="true"という属性がつくようになる -->
                             <li v-for="(memo, index) in memos" @click="selectMemo(index)">
@@ -61,6 +59,21 @@
                 </transition>
             </div><!-- /.org_controlAreaWrap -->
         </div><!-- /.org_list -->
+
+        <div class="org_accordionPanel row">
+            <div class="org_toggleCssBox col-6">
+                <input type="checkbox" id="label1" />
+                <label for="label1" v-on:click="toggleWriteArea"><i class="org_iconPen fa fa-lg fa-pencil-square-o"></i>記述エリア
+                </label>
+            </div>
+
+            <div class="org_toggleCssBox col-6">
+                <input type="checkbox" id="label2" />
+
+                <label for="label2" v-on:click="toggleSampleArea"><i class="org_iconCode fa fa-lg fa-code"></i>マークダウンサンプル エリア
+                </label>
+            </div>
+        </div><!-- /.org_accordionPanel -->
 
         <div class="org_memo row">
             <!-- v-modelでinputやtextareaの状態をコンポーネントのデータmarkdownの中へ格納する データバインディング -->
@@ -296,7 +309,7 @@ export default {
 <style lang="scss" scoped>
 
 $areaHeight: 400px;
-$areaHeightSample: 1000px;
+$areaHeightSample: 1200px;
 
 .name {
     font-size: 1.8rem;
@@ -312,11 +325,8 @@ $areaHeightSample: 1000px;
     }
 }
 
-
-    .org_list {
-        margin-bottom: 3rem;
-    }
-
+.org_list {
+    margin-bottom: 3rem;
     .org_controlAreaWrap {
         cursor: pointer;
         margin: 0 2rem;
@@ -339,29 +349,29 @@ $areaHeightSample: 1000px;
                 }
             }
         }
-        .org_accordion {
+        .org_accordionControlArea {
             margin-top: 1rem;
             transition: 150ms ease-out;
-        }
-        .org_memoListArea {
-            margin: 0;
-            li {
-                width: 100%;
-                border-bottom: 1px dotted #ddd;
+            .org_memoListArea {
                 margin: 0;
-                text-align: left;
-                &:first-child {
-                    border-top: 1px dotted #ddd;   
-                }
-                p {
-                    border: 3px solid #fff;
-                    padding: .6rem;
+                li {
                     width: 100%;
+                    border-bottom: 1px dotted #ddd;
                     margin: 0;
-                    font-size: 1.3rem;
-                }
-                p[data-selected="true"] {
-                    border: 3px solid #d9d9d9;
+                    text-align: left;
+                    &:first-child {
+                        border-top: 1px dotted #ddd;   
+                    }
+                    p {
+                        border: 3px solid #fff;
+                        padding: .6rem;
+                        width: 100%;
+                        margin: 0;
+                        font-size: 1.3rem;
+                    }
+                    p[data-selected="true"] {
+                        border: 3px solid #d9d9d9;
+                    }
                 }
             }
         }
@@ -378,10 +388,46 @@ $areaHeightSample: 1000px;
             }
         }
     }
+}
+
+.org_accordionPanel {
+    cursor: pointer;
+        .org_toggleCssBox {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            label {
+                cursor :pointer;
+                transition: .5s;
+                &:after {
+                    display: inline-block;
+                    content: '\f205';
+                    font-family: 'FontAwesome';
+                    padding-left: .4rem;
+                    font-size: 1.8rem;
+                }
+                .org_iconPen {
+                    margin-right: .5rem;
+                    vertical-align: -.1rem;
+                }
+                .org_iconCode {
+                    margin-right: .5rem;
+                    vertical-align: -.1rem;
+                }
+            }
+        /*チェックは見えなくする*/
+        input {
+            display: none;
+            /*クリックで中身表示*/
+            &:checked ~ label:after {
+                content: '\f204';
+            }
+        }
+    }
+}
 
 .org_memo {
-        margin-top: 3rem;
-    
+    margin-top: 3rem; 
     .org_writeAreaWrap {
         .org_writeArea {
             width: 100%;
@@ -461,29 +507,26 @@ $areaHeightSample: 1000px;
     }
 
 
-
-
-    /* Extra small devices: Phones (<768px) */
-    @media (max-width: 991px) {
-        .org_controlArea {
-            li {
-                margin-left: 0;
-                margin-right: 0; 
-            }
-        }
-        .org_writeAreaWrap {
-            margin-top: 2rem;
-            .org_writeArea {
-                height: 300px;
-            }
-        }
-        .org_previewAreaWrap {
-            margin-top: 2rem;
-            .org_previewArea {
-                height: 300px;
-            }
+/* width 991px 以下の場合この指定が効く */
+@media (max-width: 991px) {
+    .org_controlArea {
+        li {
+            margin-left: 0;
+            margin-right: 0; 
         }
     }
-
+    .org_writeAreaWrap {
+        margin-top: 2rem;
+        .org_writeArea {
+            height: 300px;
+        }
+    }
+    .org_previewAreaWrap {
+        margin-top: 2rem;
+        .org_previewArea {
+            height: 300px;
+        }
+    }
+}
 
 </style>
