@@ -13,8 +13,8 @@
                 <h2 class="org_areaTitle org_accordionHeader" v-on:click="toggleControlArea">メモのリスト
                     <i class="fa fa-lg fa-angle-down org_icon" v-bind:class="{ rotate: showControlArea }"></i>
                 </h2>
-
-                <div class="org_controlArea org_accordionControlArea" v-show="showControlArea">
+                <transition name="org_slide-fade-up">
+                    <div class="org_controlArea org_accordionControlArea" v-show="showControlArea">
                     <ul class="org_memoListArea">
                         <!-- :data-selected="index == selectedIndex" メモのindexが現在選択されているものと一致した場合には動的にdata-selected="true"という属性がつくようになる -->
                         <li v-for="(memo, index) in memos" @click="selectMemo(index)">
@@ -56,11 +56,11 @@
                             <button class="org_deleteMemoBtn btn btn-outline-danger" v-on:click="deleteMemo">選択中のメモの削除</button>
                         </li>
                     </ul>
-                </div>
+                    </div><!-- .org_controlArea -->
+                </transition>
             </div><!-- /.org_controlAreaWrap -->
         </div><!-- /.org_list -->
         
-        <div class="row">
         <div class="org_accordionPanel row">
             <div class="org_toggleCssBox col-6">
                 <input type="checkbox" id="label1" />
@@ -75,7 +75,6 @@
                 </label>
             </div>
         </div><!-- /.org_accordionPanel -->
-        </div>
 
         <div class="org_memo row">
             <!-- v-modelでinputやtextareaの状態をコンポーネントのデータmarkdownの中へ格納する データバインディング -->
@@ -96,7 +95,7 @@
 
         <div class="org_memoSample">
             <!-- v-modelでinputやtextareaの状態をコンポーネントのデータmarkdownの中へ格納する データバインディング -->
-            <transition name="org_slide-fade-sample">
+            <transition name="org_slide-fade-up">
                 <div class="org_accordionSample row" v-show="showSampleArea">
                     <div class="org_writeAreaWrap col-lg-6">
                             <h2 class="org_areaTitle">マークダウンサンプル 記述エリア</h2>
@@ -481,31 +480,34 @@ $areaHeightSample: 1200px;
     }
 }
 
-    .org_slide-fade-enter-active {
-      transition: all .3s ease;
-    }
-    .org_slide-fade-leave-active {
-      transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-    }
-    .org_slide-fade-enter, 
-    .org_slide-fade-leave-to
-    /* .slide-fade-leave-active below version 2.1.8 */ {
-      transform: translateX(10px);
-      opacity: 0;
-    }
+//transion用の指定
+// transition nameにつけた名前でトランジションクラスの名前も変更可能
+// 例）.v-enter-acitive ➡︎ .org_slide-fade-enter-active(.v-より前がつけたnameに入れ替わる)
+.org_slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.org_slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.org_slide-fade-enter, 
+.org_slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
 
-    .org_slide-fade-sample-enter-active {
-      transition: all .3s ease;
-    }
-    .org_slide-fade--sample-leave-active {
-      transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-    }
-    .org_slide-fade--sample-enter, 
-    .org_slide-fade--sample-leave-to
-    /* .slide-fade-leave-active below version 2.1.8 */ {
-      transform: translateX(10px);
-      opacity: 0;
-    }
+.org_slide-fade-up-enter-active {
+  transition: all 1s ease;
+}
+.org_slide-fade-up-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.org_slide-fade-up-enter, 
+.org_slide-fade-up-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateY(-10px);
+  opacity: 0;
+}
 
 
 /* width 991px 以下の場合この指定が効く */
