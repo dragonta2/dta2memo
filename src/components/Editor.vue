@@ -19,12 +19,13 @@
                             <!-- :data-selected="index == selectedIndex" メモのindexが現在選択されているものと一致した場合には動的にdata-selected="true"という属性がつくようになる -->
                             <li v-for="(memo, index) in memos" @click="selectMemo(index)">
                                 <p v-if="memo.markdown" :data-selected="index == selectedIndex">{{ displayTitle(memo.markdown)}}</p>
+                                <!-- 記述エリアに何も書かれていなかったら data:内の nonTitleText: "No TEXT" を返す-->
                                 <p v-if="!memo.markdown" :data-selected="index == selectedIndex">{{ displayNonTitle(memo.markdown) }}</p>
                             </li>
                         </ul>
                         <ul class="org_btnArea">
                             <li>
-                                <button class="org_addMemoBtn btn btn-outline-info" @click="addMemo">メモの追加</button>
+                                <button class="org_addMemoBtn btn btn-outline-info" v-on:click="addMemo">メモの追加</button>
                             </li>
 
                             <li>
@@ -59,21 +60,23 @@
                 </transition>
             </div><!-- /.org_controlAreaWrap -->
         </div><!-- /.org_list -->
-
+        
+        <div class="row">
         <div class="org_accordionPanel row">
             <div class="org_toggleCssBox col-6">
                 <input type="checkbox" id="label1" />
-                <label for="label1" v-on:click="toggleWriteArea"><i class="org_iconPen fa fa-lg fa-pencil-square-o"></i>記述エリア
+                <label for="label1" v-on:click="toggleWriteArea"><i class="org_iconPen fa fa-pencil-square-o"></i><span>記述エリア</span>
                 </label>
             </div>
 
             <div class="org_toggleCssBox col-6">
                 <input type="checkbox" id="label2" />
 
-                <label for="label2" v-on:click="toggleSampleArea"><i class="org_iconCode fa fa-lg fa-code"></i>マークダウンサンプル エリア
+                <label for="label2" v-on:click="toggleSampleArea"><i class="org_iconCode fa fa-code"></i><span>マークダウンサンプル エリア</span>
                 </label>
             </div>
         </div><!-- /.org_accordionPanel -->
+        </div>
 
         <div class="org_memo row">
             <!-- v-modelでinputやtextareaの状態をコンポーネントのデータmarkdownの中へ格納する データバインディング -->
@@ -146,10 +149,11 @@ export default {
     }, 
     //ライフサイクルフック コンポーネント作成時に実行される
     created: function(){
+        // firebaseに対して.dataabase()を実行してデータベースに接続
         firebase
         //DBへの接続
         .database()
-        //パスの指定
+        // .ref('memos/' + this.user.uid)　で データを格納するパスを指定
         .ref('memos/' + this.user.uid)
         //1回だけの読み込み
         .once('value')
@@ -190,7 +194,9 @@ export default {
             });
 
             this.selectedIndex = this.memos.length - 1;
-            this.focusMemo();
+            // this.focusMemo();
+            this.plusHeight();
+            //var plusHeight = this.style.height + '38px';
         },
         /*deleteMemo: function(){
             const title = this.displayTitle(this.memos[this.selectedIndex].markdown);
@@ -234,6 +240,7 @@ export default {
             firebase
                 .database()
                 .ref('memos/' + this.user.uid)
+                // .set(this.memos);　で指定したパスへデータを保存する
                 .set(this.memos)
                 .then(res => {
                     this.isSaving = false;
@@ -242,7 +249,7 @@ export default {
         // 発火された（この場合クリック）配列のindex番号を取得してselectedIndexに代入
         selectMemo: function(index){
             this.selectedIndex = index;
-            this.focusMemo();
+            //this.focusMemo();
         },
         focusMemo: function(){
             this.$nextTick(() => {
@@ -257,20 +264,19 @@ export default {
         previewSample: function(){
             return markdown(this.memos[0].markdown);
         },
+        //メモのタイトル（メモの1行目の文章） 改行箇所で分割して配列にする。その配列のはじめの値(インデックス番号 0)を返却する
+        // displayTitle: function(text){
+        //     return text.split(/\n/)[0].replace(/#+\s/, '');
+        // },
         displayTitle: function(text) {
             return text.split(/\n/)[0].replace(/#+\s|-\s/, '');
         },
         displayNonTitle: function(text) {
             return this.nonTitleText;
         },
-        //メモのタイトル（メモの1行目の文章） 改行箇所で分割して配列にする。その配列のはじめの値(インデックス番号 0)を返却する
-        // displayTitle: function(text){
-        //     return text.split(/\n/)[0].replace(/#+\s/, '') || 'no text';;
-        // },
         
-        // firebaseに対して.dataabase()を実行してデータベースに接続
-        // .ref('memos/' + this.user.uid)　で データを格納するパスを指定
-        // .set(this.memos);　で指定したパスへデータを保存する
+        
+        
 
         // アコーディオン controlArea用
         toggleControlArea: function() {
@@ -293,6 +299,7 @@ export default {
         onLeave: function(el) {
             el.style.height = 0
         },
+        
         // アコーディオン writeArea用
         toggleWriteArea: function() {
             this.showWriteArea = !this.showWriteArea;
@@ -301,6 +308,11 @@ export default {
         toggleSampleArea: function() {
             this.showSampleArea = !this.showSampleArea;
         },
+    },
+    computed: {
+        plusHeight: function() {
+            return 
+        }
     }
 };
 </script>
@@ -331,7 +343,7 @@ $areaHeightSample: 1200px;
         cursor: pointer;
         margin: 0 2rem;
         padding-bottom: 1.5rem;
-        border-bottom: 1px dotted #ddd;
+        // border-bottom: 1px dotted #ddd;
         width: 100%;
         .org_accordionHeader {
             height: 3rem;
@@ -392,6 +404,11 @@ $areaHeightSample: 1200px;
 
 .org_accordionPanel {
     cursor: pointer;
+    // margin-top: 8rem;
+    // margin: 2rem 2rem 0;
+    width: 100%;
+    // border-top: 1px dotted #ddd;
+    // padding-top: 3rem;
         .org_toggleCssBox {
             display: flex;
             justify-content: center;
@@ -403,16 +420,22 @@ $areaHeightSample: 1200px;
                     display: inline-block;
                     content: '\f205';
                     font-family: 'FontAwesome';
-                    padding-left: .4rem;
+                    padding-left: .6rem;
                     font-size: 1.8rem;
+                    vertical-align: middle;
                 }
                 .org_iconPen {
                     margin-right: .5rem;
-                    vertical-align: -.1rem;
+                    font-size: 2rem;
+                    vertical-align: middle;
                 }
                 .org_iconCode {
                     margin-right: .5rem;
-                    vertical-align: -.1rem;
+                    font-size: 2rem;
+                    vertical-align: middle;
+                }
+                span {
+                    vertical-align: middle;
                 }
             }
         /*チェックは見えなくする*/
