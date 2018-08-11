@@ -13,6 +13,7 @@
                 <h2 class="org_areaTitle org_accordionHeader" v-on:click="toggleControlArea">メモのリスト
                     <i class="fa fa-lg fa-angle-down org_icon" v-bind:class="{ rotate: showControlArea }"></i>
                 </h2>
+                <!-- transition 削除前 .org_controlArea -->
                 <transition v-on:before-enter="onBeforeEnter" v-on:enter="onEnter" v-on:before-leave="onBeforeLeave" v-on:leave="onLeave">
                     <div class="org_controlArea org_accordionControlArea" v-show="showControlArea">
                         <ul class="org_memoListArea">
