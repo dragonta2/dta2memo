@@ -13,52 +13,50 @@
                 <h2 class="org_areaTitle org_accordionHeader" v-on:click="toggleControlArea">メモのリスト
                     <i class="fa fa-lg fa-angle-down org_icon" v-bind:class="{ rotate: showControlArea }"></i>
                 </h2>
-                <!-- transition 削除前 .org_controlArea -->
-                <transition v-on:before-enter="onBeforeEnter" v-on:enter="onEnter" v-on:before-leave="onBeforeLeave" v-on:leave="onLeave">
-                    <div class="org_controlArea org_accordionControlArea" v-show="showControlArea">
-                        <ul class="org_memoListArea">
-                            <!-- :data-selected="index == selectedIndex" メモのindexが現在選択されているものと一致した場合には動的にdata-selected="true"という属性がつくようになる -->
-                            <li v-for="(memo, index) in memos" @click="selectMemo(index)">
-                                <p v-if="memo.markdown" :data-selected="index == selectedIndex">{{ displayTitle(memo.markdown)}}</p>
-                                <!-- 記述エリアに何も書かれていなかったら data:内の nonTitleText: "No TEXT" を返す-->
-                                <p v-if="!memo.markdown" :data-selected="index == selectedIndex">{{ displayNonTitle(memo.markdown) }}</p>
-                            </li>
-                        </ul>
-                        <ul class="org_btnArea">
-                            <li>
-                                <button class="org_addMemoBtn btn btn-outline-info" v-on:click="addMemo">メモの追加</button>
-                            </li>
 
-                            <li>
-                                <button class="org_saveMemoBtn btn btn-outline-info" v-on:click="saveMemos">メモの保存</button>
-                            </li>
+                <div class="org_controlArea org_accordionControlArea" v-show="showControlArea">
+                    <ul class="org_memoListArea">
+                        <!-- :data-selected="index == selectedIndex" メモのindexが現在選択されているものと一致した場合には動的にdata-selected="true"という属性がつくようになる -->
+                        <li v-for="(memo, index) in memos" @click="selectMemo(index)">
+                            <p v-if="memo.markdown" :data-selected="index == selectedIndex">{{ displayTitle(memo.markdown)}}</p>
+                            <!-- 記述エリアに何も書かれていなかったら data:内の nonTitleText: "No TEXT" を返す-->
+                            <p v-if="!memo.markdown" :data-selected="index == selectedIndex">{{ displayNonTitle(memo.markdown) }}</p>
+                        </li>
+                    </ul>
+                    <ul class="org_btnArea">
+                        <li>
+                            <button class="org_addMemoBtn btn btn-outline-info" v-on:click="addMemo">メモの追加</button>
+                        </li>
 
-                            <!-- リストの数が2つ以上あってマークダウン記法サンプル以外が選択されている場合 -->
-                            <!-- <li v-if="memos.length > 1 && !this.selectedIndex == 0">
-                                <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
-                            </li> -->
-                            <!-- リストの数が2つ以上あってマークダウン記法サンプルが選択されている場合 -->
-                            <!-- <li v-if="memos.length > 1 && this.selectedIndex == 0">
-                                <button class="deleteMemoBtn btn btn-outline-info">選択中のメモの削除はできません</button>
-                            </li> -->
-                            
-                            <!-- マークダウン記法サンプル以外が選択されている場合 -->
-                            <!-- <li v-if="!this.selectedIndex == 0">
-                                <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
-                            </li> -->
-                            <!-- マークダウン記法サンプルが選択されている場合 -->
-                            <!-- <li v-if="this.selectedIndex == 0">
-                                <button class="deleteMemoBtn btn btn-outline-info">記法サンプルは削除はできません</button>
-                            </li> -->
+                        <li>
+                            <button class="org_saveMemoBtn btn btn-outline-info" v-on:click="saveMemos">メモの保存</button>
+                        </li>
 
-                            <!-- マークダウン記法サンプルが選択されている場合以外は削除ボタンを表示 -->
+                        <!-- リストの数が2つ以上あってマークダウン記法サンプル以外が選択されている場合 -->
+                        <!-- <li v-if="memos.length > 1 && !this.selectedIndex == 0">
+                            <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
+                        </li> -->
+                        <!-- リストの数が2つ以上あってマークダウン記法サンプルが選択されている場合 -->
+                        <!-- <li v-if="memos.length > 1 && this.selectedIndex == 0">
+                            <button class="deleteMemoBtn btn btn-outline-info">選択中のメモの削除はできません</button>
+                        </li> -->
+                        
+                        <!-- マークダウン記法サンプル以外が選択されている場合 -->
+                        <!-- <li v-if="!this.selectedIndex == 0">
+                            <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
+                        </li> -->
+                        <!-- マークダウン記法サンプルが選択されている場合 -->
+                        <!-- <li v-if="this.selectedIndex == 0">
+                            <button class="deleteMemoBtn btn btn-outline-info">記法サンプルは削除はできません</button>
+                        </li> -->
 
-                            <li v-if="!this.selectedIndex == 0">
-                                <button class="org_deleteMemoBtn btn btn-outline-danger" v-on:click="deleteMemo">選択中のメモの削除</button>
-                            </li>
-                        </ul>
-                    </div>
-                </transition>
+                        <!-- マークダウン記法サンプルが選択されている場合以外は削除ボタンを表示 -->
+
+                        <li v-if="!this.selectedIndex == 0">
+                            <button class="org_deleteMemoBtn btn btn-outline-danger" v-on:click="deleteMemo">選択中のメモの削除</button>
+                        </li>
+                    </ul>
+                </div>
             </div><!-- /.org_controlAreaWrap -->
         </div><!-- /.org_list -->
         
@@ -276,31 +274,10 @@ export default {
             return this.nonTitleText;
         },
         
-        
-        
-
         // アコーディオン controlArea用
         toggleControlArea: function() {
             this.showControlArea = !this.showControlArea;
         },
-        // アコーディオン controlArea用 イベント発生前
-        onBeforeEnter: function(el) {
-            el.style.height = 0;
-        },
-        // アコーディオン controlArea用 イベント発生時
-        // el.scrollHeightで<transition>にラップされた部分（ここでは div.body）の高さを取得できる
-        onEnter: function(el) {
-            el.style.height = el.scrollHeight + 'px'
-        },
-        // アコーディオン controlArea用 イベント終了前
-        onBeforeLeave: function(el) {
-            el.style.height = el.scrollHeight + 'px'
-        },
-        // アコーディオン controlArea用 イベント終了時
-        onLeave: function(el) {
-            el.style.height = 0
-        },
-        
         // アコーディオン writeArea用
         toggleWriteArea: function() {
             this.showWriteArea = !this.showWriteArea;
