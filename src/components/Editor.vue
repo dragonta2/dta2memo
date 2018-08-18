@@ -16,71 +16,63 @@
 
         <div class="org_list row">
             <div class="org_controlAreaWrap">
-                <h2 class="org_areaTitle org_accordionHeader" v-on:click="toggleControlArea">メモのリスト
+                <div class="org_accordionHeader" v-on:click="toggleControlArea">
+                    <p class="org_areaTitle">メモのリスト</p>
                     <i class="fa fa-lg fa-angle-down org_icon" v-bind:class="{ rotate: showControlArea }"></i>
-                </h2>
+                </div>
                 <transition name="org_slide-fade-up">
-                    <div class="org_controlArea org_accordionControlArea" v-show="showControlArea">
-                    <ul class="org_memoListArea">
-                        <!-- :data-selected="index == selectedIndex" メモのindexが現在選択されているものと一致した場合には動的にdata-selected="true"という属性がつくようになる -->
-                        <li v-for="(memo, index) in memos" @click="selectMemo(index)">
-                            <p v-if="memo.markdown" :data-selected="index == selectedIndex">{{ displayTitle(memo.markdown)}}</p>
-                            <!-- 記述エリアに何も書かれていなかったら data:内の nonTitleText: "No TEXT" を返す-->
-                            <p v-if="!memo.markdown" :data-selected="index == selectedIndex">{{ displayNonTitle(memo.markdown) }}</p>
-                        </li>
-                    </ul>
-                    <ul class="org_btnArea">
-                        <li>
-                            <button class="org_addMemoBtn btn btn-outline-info" v-on:click="addMemo">メモの追加</button>
-                        </li>
+                    <div class="org_controlArea" v-show="showControlArea">
+                        <ul class="org_memoListArea">
+                            <!-- :data-selected="index == selectedIndex" メモのindexが現在選択されているものと一致した場合には動的にdata-selected="true"という属性がつくようになる -->
+                            <li v-for="(memo, index) in memos" @click="selectMemo(index)" v-if="memo.markdown">
+                                <p :data-selected="index == selectedIndex">{{ displayTitle(memo.markdown)}}</p>
+                                <!-- 記述エリアに何も書かれていなかったら data:内の nonTitleText: "No TEXT" を返す-->
+                                <p v-if="!memo.markdown" :data-selected="index == selectedIndex">{{ displayNonTitle(memo.markdown) }}</p>
+                            </li>
+                        </ul>
+                        <ul class="org_btnArea">
+                            <li>
+                                <button class="org_addMemoBtn btn btn-outline-info" v-on:click="addMemo">メモの追加</button>
+                            </li>
 
-                        <li>
-                            <button class="org_saveMemoBtn btn btn-outline-info" v-on:click="saveMemos">メモの保存</button>
-                        </li>
+                            <li>
+                                <button class="org_saveMemoBtn btn btn-outline-info" v-on:click="saveMemos">メモの保存</button>
+                            </li>
 
-                        <!-- リストの数が2つ以上あってマークダウン記法サンプル以外が選択されている場合 -->
-                        <!-- <li v-if="memos.length > 1 && !this.selectedIndex == 0">
-                            <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
-                        </li> -->
-                        <!-- リストの数が2つ以上あってマークダウン記法サンプルが選択されている場合 -->
-                        <!-- <li v-if="memos.length > 1 && this.selectedIndex == 0">
-                            <button class="deleteMemoBtn btn btn-outline-info">選択中のメモの削除はできません</button>
-                        </li> -->
-                        
-                        <!-- マークダウン記法サンプル以外が選択されている場合 -->
-                        <!-- <li v-if="!this.selectedIndex == 0">
-                            <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
-                        </li> -->
-                        <!-- マークダウン記法サンプルが選択されている場合 -->
-                        <!-- <li v-if="this.selectedIndex == 0">
-                            <button class="deleteMemoBtn btn btn-outline-info">記法サンプルは削除はできません</button>
-                        </li> -->
+                            <!-- リストの数が2つ以上あってマークダウン記法サンプル以外が選択されている場合 -->
+                            <!-- <li v-if="memos.length > 1 && !this.selectedIndex == 0">
+                                <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
+                            </li> -->
+                            <!-- リストの数が2つ以上あってマークダウン記法サンプルが選択されている場合 -->
+                            <!-- <li v-if="memos.length > 1 && this.selectedIndex == 0">
+                                <button class="deleteMemoBtn btn btn-outline-info">選択中のメモの削除はできません</button>
+                            </li> -->
+                            
+                            <!-- マークダウン記法サンプル以外が選択されている場合 -->
+                            <!-- <li v-if="!this.selectedIndex == 0">
+                                <button class="deleteMemoBtn btn btn-outline-info" v-on:click="deleteMemo">選択中のメモの削除</button>
+                            </li> -->
+                            <!-- マークダウン記法サンプルが選択されている場合 -->
+                            <!-- <li v-if="this.selectedIndex == 0">
+                                <button class="deleteMemoBtn btn btn-outline-info">記法サンプルは削除はできません</button>
+                            </li> -->
 
-                        <!-- マークダウン記法サンプルが選択されている場合以外は削除ボタンを表示 -->
+                            <!-- マークダウン記法サンプルが選択されている場合以外は削除ボタンを表示 -->
 
-                        <li v-if="!this.selectedIndex == 0">
-                            <button class="org_deleteMemoBtn btn btn-outline-danger" v-on:click="deleteMemo">選択中のメモの削除</button>
-                        </li>
-                    </ul>
+                            <li v-if="!this.selectedIndex == 0">
+                                <button class="org_deleteMemoBtn btn btn-outline-danger" v-on:click="deleteMemo">選択中のメモの削除</button>
+                            </li>
+                        </ul>
                     </div><!-- .org_controlArea -->
                 </transition>
             </div><!-- /.org_controlAreaWrap -->
         </div><!-- /.org_list -->
         
-        <div class="org_accordionPanel row">
-            <div class="org_toggleCssBox col-5">
+            <div class="org_toggleCssBox">
                 <input type="checkbox" id="label1" />
                 <label for="label1" v-on:click="toggleWriteArea"><i class="org_iconPen fa fa-pencil-square-o"></i><span>記述エリア</span>
                 </label>
-            </div>
-
-            <div class="org_toggleCssBox col-6">
-                <input type="checkbox" id="label2" />
-
-                <label for="label2" v-on:click="toggleSampleArea"><i class="org_iconCode fa fa-code"></i><span>マークダウンサンプル エリア</span>
-                </label>
-            </div>
-        </div><!-- /.org_accordionPanel -->
+            </div><!-- /.org_toggleCssBox -->
 
         <div class="org_memo row">
             <!-- v-modelでinputやtextareaの状態をコンポーネントのデータmarkdownの中へ格納する データバインディング -->
@@ -98,6 +90,13 @@
                 <div class="org_previewArea markdown-body" v-html="preview()"></div>
             </div>
         </div><!-- /.org_memo -->
+
+            <div class="org_toggleCssBox">
+                <input type="checkbox" id="label2" />
+
+                <label for="label2" v-on:click="toggleSampleArea"><i class="org_iconCode fa fa-code"></i><span>マークダウンサンプル エリア</span>
+                </label>
+            </div><!-- /.org_toggleCssBox -->
 
         <div class="org_memoSample">
             <!-- v-modelでinputやtextareaの状態をコンポーネントのデータmarkdownの中へ格納する データバインディング -->
@@ -340,8 +339,6 @@ $areaHeight: 800px;
 $areaHeightSample: 1200px;
 
 .org_statusArea {
-    border-bottom: 1px solid $themeColor;
-    margin-bottom: 3rem;
     padding-bottom: 2rem;
     display: flex;
     justify-content: flex-end;
@@ -367,21 +364,23 @@ $areaHeightSample: 1200px;
 }
 
 .org_list {
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
+    background-color: #000;
+    color: #fff;
     .org_controlAreaWrap {
         cursor: pointer;
-        margin: 0 2rem;
-        padding-bottom: 1.5rem;
+        margin: 2rem;
         // border-bottom: 1px dotted #ddd;
         width: 100%;
         .org_accordionHeader {
-            height: 3rem;
             display: flex;
             justify-content: space-between;
             width: 100%;
+            height: 2rem;
+            .olg_areaTitle {
+                margin: 0;
+            }
             .org_icon {
-                display: table-cell;
-                line-height: 3rem;
                 transform: rotate(0deg);
                 transition-duration: 0.3s;
                 &.rotate {
@@ -390,8 +389,8 @@ $areaHeightSample: 1200px;
                 }
             }
         }
-        .org_accordionControlArea {
-            margin-top: 1rem;
+        .org_controlArea {
+            margin-top: 1.4rem;
             transition: 150ms ease-out;
             .org_memoListArea {
                 margin: 0;
@@ -402,26 +401,46 @@ $areaHeightSample: 1200px;
                     border-bottom-color: $themeColor;
                     margin: 0;
                     text-align: left;
+                    // border: 3px solid #000;
+                    box-sizing: border-box;
                     &:first-child {
-                        border-top: 1px dotted #ddd;   
+                        // border-top: 1px dotted #ddd;
+                        border-top: 1px dotted;
+                        border-top-color: $themeColor;
                     }
+                    // &[data-selected="true"] {
+                    //     border: 3px solid;
+                    //     // border-color: #d9d9d9;
+                    //     border-color: $themeColor;
+                    //     box-sizing: border-box;
+                    //     p {
+                    //         border: none;
+                    //         box-sizing: border-box;
+                    //     }
+                    // }
                     p {
-                        border: 3px solid #fff;
-                        padding: .6rem;
+                        padding: .8rem;
                         width: 100%;
                         margin: 0;
                         font-size: 1.3rem;
+                        border: 3px solid #000;
+                        // border-bottom: 1px dotted;
+                        // border-bottom-color: $themeColor;
+                        box-sizing: border-box;
                     }
                     p[data-selected="true"] {
                         border: 3px solid;
                         // border-color: #d9d9d9;
                         border-color: $themeColor;
                     }
+                    // p[data-selected="true"] + li {
+                    //     border-top: none;
+                    // }
                 }
             }
         }
         .org_btnArea {
-            // margin-top: 1.5rem;
+            margin-top: 1rem;
             li {
                 margin: 1.5rem 0 0;
                 width: 100%;
@@ -435,100 +454,127 @@ $areaHeightSample: 1200px;
     }
 }
 
-.org_accordionPanel {
+
+.org_toggleCssBox {
     cursor: pointer;
-    width: 100%;
-        .org_toggleCssBox {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            label {
-                cursor :pointer;
-                transition: .5s;
-                &:after {
-                    display: inline-block;
-                    content: '\f205';
-                    font-family: 'FontAwesome';
-                    padding-left: .6rem;
-                    font-size: 1.8rem;
-                    vertical-align: middle;
-                }
-                .org_iconPen {
-                    margin-right: .5rem;
-                    font-size: 2rem;
-                    vertical-align: middle;
-                }
-                .org_iconCode {
-                    margin-right: .5rem;
-                    font-size: 2rem;
-                    vertical-align: middle;
-                }
-                span {
-                    vertical-align: middle;
-                }
-            }
-        /*チェックは見えなくする*/
-        input {
-            display: none;
-            /*クリックで中身表示*/
-            &:checked ~ label:after {
-                content: '\f204';
-            }
+    // text-align: ;
+    // background: $themeColor;
+    border-top: 1px solid #777;
+    border-bottom: 1px solid #777;
+    padding: .6rem 2rem .2rem;
+    box-sizing: border-box;
+    color: #777;
+    /*チェックボックスは見えなくする*/
+    input {
+        display: none;
+        /*クリックで中身表示*/
+        &:checked ~ label:after {
+            content: '\f204';
+        }
+    }
+    label {
+        transition: .5s;
+        text-align: center;
+        display: block;
+        &:after {
+            display: inline-block;
+            content: '\f205';
+            font-family: 'FontAwesome';
+            padding-left: .6rem;
+            font-size: 2.2rem;
+            vertical-align: middle;
+        }
+        .org_iconPen {
+            margin-right: .5rem;
+            font-size: 2.5rem;
+            vertical-align: middle;
+        }
+        .org_iconCode {
+            margin-right: .5rem;
+            font-size: 2rem;
+            vertical-align: middle;
+        }
+        span {
+            vertical-align: middle;
+            font-size: 1.5rem;
         }
     }
 }
 
 .org_memo {
-    margin-top: 3rem; 
+    margin: 4rem 0; 
     .org_writeAreaWrap {
         .org_writeArea {
             width: 100%;
-            border: 1px dotted #ddd;
+            // border: 1px dotted #ddd;
+            border: 1px dotted;
+            border-color: $themeColor;
+            border-top: none;
             height: $areaHeight;
-            padding: 1rem;
+            padding: 1.4rem;
+            &:focus {
+                outline: none;
+            }
         }
     }
     .org_previewAreaWrap {
         .org_previewArea {
             width: 100%;
-            border: 1px solid #ddd;
+            // border: 1px solid #ddd;
+            border: 1px solid;
+            border-color: $themeColor;
+            border-top: none;
             height: $areaHeight;
             text-align: left;
-            padding: 1rem;
+            padding: 1.4rem;
             overflow: auto;
         }
     }
     .org_areaTitle {
         text-align: left;
-        font-size: 2.5rem;
-        padding: 0 .3rem .2rem;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #fff;
+        padding: 1rem 1.4rem .6rem;
+        margin-bottom: 0;
+        background-color: $themeColor;
     }
 }
 
 .org_memoSample {
-    margin-top: 3rem;
+    margin-top: 4rem;
     .org_writeAreaWrap {
         .org_writeArea {
             width: 100%;
-            border: 1px dotted #ddd;
+            // border: 1px dotted #ddd;
+            border: 1px dotted;
+            border-color: $themeSubColor;
+            border-top: none;
             height: $areaHeightSample;
-            padding: 1rem;
+            padding: 1.4rem;
         }
     }
     .org_previewAreaWrap {
         .org_previewArea {
             width: 100%;
-            border: 1px solid #ddd;
+            // border: 1px solid #ddd;
+            border: 1px solid;
+            border-color: $themeSubColor;
+            border-top: none;
             height: $areaHeightSample;
             text-align: left;
-            padding: 1rem;
+            padding: 1.4rem;
             overflow: auto;
         }
     }
     .org_areaTitle {
         text-align: left;
-        font-size: 2.5rem;
-        padding: 0 .3rem .2rem;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #fff;
+        padding: 1rem 1.4rem .6rem;
+        margin-bottom: 0;
+        background-color: $themeSubColor;
     }
 }
 
@@ -571,13 +617,13 @@ $areaHeightSample: 1200px;
         }
     }
     .org_writeAreaWrap {
-        margin-top: 2rem;
+        // margin-top: 2rem;
         .org_writeArea {
             height: 300px;
         }
     }
     .org_previewAreaWrap {
-        margin-top: 2rem;
+        // margin-top: 2rem;
         .org_previewArea {
             height: 300px;
         }
