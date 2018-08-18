@@ -68,17 +68,17 @@
             </div><!-- /.org_controlAreaWrap -->
         </div><!-- /.org_list -->
         
-            <div class="org_toggleCssBox">
-                <input type="checkbox" id="label1" />
-                <label for="label1" v-on:click="toggleWriteArea"><i class="org_iconPen fa fa-pencil-square-o"></i><span>記述エリア</span>
-                </label>
-            </div><!-- /.org_toggleCssBox -->
+        <div class="org_toggleCssBox">
+            <input type="checkbox" id="label1" />
+            <label for="label1" v-on:click="toggleWriteArea"><i class="org_iconPen fa fa-pencil-square-o"></i><span>WRITE AREA</span>
+            </label>
+        </div><!-- /.org_toggleCssBox -->
 
         <div class="org_memo row">
             <!-- v-modelでinputやtextareaの状態をコンポーネントのデータmarkdownの中へ格納する データバインディング -->
             <transition name="org_slide-fade">
                 <div class="org_writeAreaWrap col-lg-7" v-show="showWriteArea">
-                    <h2 class="org_areaTitle">記述エリア</h2>
+                    <h2 class="org_areaTitle">WRITE AREA</h2>
                     <textarea class="org_writeArea" v-model="memos[selectedIndex].markdown" ref="markdown"></textarea>
                 </div>
             </transition>
@@ -86,7 +86,7 @@
             <!-- v-htmlで指定されたpreview()関数の実行結果がHTMLとして描画される XSSの原因になるのでユーザー間で共有するようなものを作る場合は注意 -->
             <!-- 三項演算子でclassの付与を振り分け -->
             <div class="org_previewAreaWrap" v-bind:class="[showWriteArea === true ?'col-lg-5' : 'col-lg-12']">
-                <h2 class="org_areaTitle">プレビューエリア</h2>
+                <h2 class="org_areaTitle">PREVIEW AREA</h2>
                 <div class="org_previewArea markdown-body" v-html="preview()"></div>
             </div>
         </div><!-- /.org_memo -->
@@ -94,7 +94,7 @@
             <div class="org_toggleCssBox">
                 <input type="checkbox" id="label2" />
 
-                <label for="label2" v-on:click="toggleSampleArea"><i class="org_iconCode fa fa-code"></i><span>マークダウンサンプル エリア</span>
+                <label for="label2" v-on:click="toggleSampleArea"><i class="org_iconCode fa fa-code"></i><span>SAMPLE AREA</span>
                 </label>
             </div><!-- /.org_toggleCssBox -->
 
@@ -103,12 +103,12 @@
             <transition name="org_slide-fade-up">
                 <div class="org_accordionSample row" v-show="showSampleArea">
                     <div class="org_writeAreaWrap col-lg-7">
-                            <h2 class="org_areaTitle">サンプル 記述エリア</h2>
+                            <h2 class="org_areaTitle">SAMPLE WRITE AREA</h2>
                             <textarea class="org_writeArea" v-model="memos[0].markdown" ref="markdown"></textarea>
                     </div>
                     <!-- v-htmlで指定されたpreview()関数の実行結果がHTMLとして描画される XSSの原因になるのでユーザー間で共有するようなものを作る場合は注意 -->
                     <div class="org_previewAreaWrap col-lg-5">
-                        <h2 class="org_areaTitle">サンプル プレビューエリア</h2>
+                        <h2 class="org_areaTitle">SAMPLE PREVIEW AREAW </h2>
                         <div class="org_previewArea markdown-body" v-html="previewSample()"></div>
                     </div><!-- /.org_previewAreaWrap -->
                 </div>
@@ -123,7 +123,7 @@
 // import marked from 'marked';
 import markdown from '../lib/markdown';
 // src/assets/sample.jsに書かれているサンプル用の記述を「sampleMarkdown」という名前で呼び出し
-import sampleMarkdown from '../assets/sample';
+import sampleMarkdown from '../assets/sample_text';
 
 
 export default {
@@ -364,20 +364,21 @@ $areaHeightSample: 1200px;
 }
 
 .org_list {
-    margin-bottom: 4rem;
     background-color: #000;
     color: #fff;
+    margin-bottom: 4rem;
     .org_controlAreaWrap {
         cursor: pointer;
-        margin: 2rem;
+        // margin: 2rem;
         // border-bottom: 1px dotted #ddd;
         width: 100%;
         .org_accordionHeader {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             width: 100%;
-            height: 2rem;
-            .olg_areaTitle {
+            padding: 1.5rem 1.5rem;
+            .org_areaTitle {
                 margin: 0;
             }
             .org_icon {
@@ -390,8 +391,10 @@ $areaHeightSample: 1200px;
             }
         }
         .org_controlArea {
-            margin-top: 1.4rem;
             transition: 150ms ease-out;
+            background-color: #2F2F2F;
+            padding-bottom: 1.5rem;
+            box-sizing: border-box;
             .org_memoListArea {
                 margin: 0;
                 li {
@@ -401,41 +404,25 @@ $areaHeightSample: 1200px;
                     border-bottom-color: $themeColor;
                     margin: 0;
                     text-align: left;
-                    // border: 3px solid #000;
-                    box-sizing: border-box;
                     &:first-child {
                         // border-top: 1px dotted #ddd;
                         border-top: 1px dotted;
                         border-top-color: $themeColor;
                     }
-                    // &[data-selected="true"] {
-                    //     border: 3px solid;
-                    //     // border-color: #d9d9d9;
-                    //     border-color: $themeColor;
-                    //     box-sizing: border-box;
-                    //     p {
-                    //         border: none;
-                    //         box-sizing: border-box;
-                    //     }
-                    // }
                     p {
-                        padding: .8rem;
+                        padding: .8rem 1rem .6rem;
                         width: 100%;
                         margin: 0;
                         font-size: 1.3rem;
-                        border: 3px solid #000;
-                        // border-bottom: 1px dotted;
-                        // border-bottom-color: $themeColor;
+                        border: 4px solid #2F2F2F;
                         box-sizing: border-box;
                     }
                     p[data-selected="true"] {
-                        border: 3px solid;
+                        border: 4px solid;
                         // border-color: #d9d9d9;
-                        border-color: $themeColor;
+                        border-color: #ddd;
+                        // border-color: $themeColor;
                     }
-                    // p[data-selected="true"] + li {
-                    //     border-top: none;
-                    // }
                 }
             }
         }
@@ -456,9 +443,6 @@ $areaHeightSample: 1200px;
 
 
 .org_toggleCssBox {
-    cursor: pointer;
-    // text-align: ;
-    // background: $themeColor;
     border-top: 1px solid #777;
     border-bottom: 1px solid #777;
     padding: .6rem 2rem .2rem;
@@ -476,12 +460,13 @@ $areaHeightSample: 1200px;
         transition: .5s;
         text-align: center;
         display: block;
+        cursor: pointer;
         &:after {
             display: inline-block;
             content: '\f205';
             font-family: 'FontAwesome';
             padding-left: .6rem;
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             vertical-align: middle;
         }
         .org_iconPen {
@@ -492,7 +477,7 @@ $areaHeightSample: 1200px;
         .org_iconCode {
             margin-right: .5rem;
             font-size: 2rem;
-            vertical-align: middle;
+            vertical-align: text-bottom;
         }
         span {
             vertical-align: middle;
@@ -552,6 +537,7 @@ $areaHeightSample: 1200px;
             border-top: none;
             height: $areaHeightSample;
             padding: 1.4rem;
+            outline: none;
         }
     }
     .org_previewAreaWrap {
