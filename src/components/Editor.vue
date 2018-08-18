@@ -1,17 +1,22 @@
 <template>
     <div class="org_editor">
     
-        <div class="org_statusArea">
+        <header class="org_header row">
             <!-- <p v-on:click="showside = !showside">></p> -->
-            <!-- <h1>エディター画面</h1>  -->
+            <div class="titleBox">
+                <h1 class="main">DTA2<br>MEMO</h1>
+                <!-- <p class="sub">マークダウン形式のメモ帳アプリ</p> -->
+            </div>
             <!-- googleアカウント userデータ内のdisplayNameというキーに格納されたログイン名を取得 -->
-            <div class="org_name"> 
-                <p>ユーザーネーム：{{ user.displayName }}</p>
-            </div>
-            <div class="org_logOut"> 
-                <button class="btn btn-outline-warning org_btn" @click="logout">ログアウト</button>
-            </div>
-        </div>    
+            <ul>
+                <li class="org_logOut"> 
+                    <button class="btn btn-outline-warning org_btn" @click="logout">ログアウト</button>
+                </li>
+                <li class="org_name"> 
+                    <p>ユーザーネーム：{{ user.displayName }}</p>
+                </li>
+            </ul>
+        </header>
         
 
         <div class="org_list row">
@@ -338,29 +343,64 @@ export default {
 $areaHeight: 800px;
 $areaHeightSample: 1200px;
 
-.org_statusArea {
-    padding-bottom: 2rem;
+.org_header {
+    padding: 1rem;
     display: flex;
-    justify-content: flex-end;
+    // justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
-    .org_name {
-        font-size: 1.6rem;
-        margin-right: 2.5rem;
-        p {
-            margin: 0;
-        }
-    }
-    .org_logOut {
+    .titleBox {
+        width: 8rem;
+        height: 8rem;
+        padding: 0 1rem;
+        // background-color: #333;
+        background-color: $themeColor;
+        color: #fff;
         margin: 0;
-        text-align: right;
-        .org_btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .main {
             font-size: 1.6rem;
-            padding: .6rem 1rem .4rem;
-            &:hover {
-                color: #fff;
+            // font-weight: bold;
+            margin: 0;
+            // padding-bottom: .5rem;
+            // display: inline-block;
+            // vertical-align: middle;
+            // border-bottom: 2px solid #fff;
+        }
+        // .sub {
+        //     font-size: 1.2rem;
+        //     padding-top: .5rem;
+        // }
+    }
+    ul {
+        display: flex;
+        flex-direction: column;
+        // align-content: space-between;
+        align-items: flex-end;
+        margin: 0;
+        li {
+            margin: 0;
+            &.org_logOut {
+                margin: 0;
+                .org_btn {
+                    font-size: 1.4rem;
+                    padding: .5rem 1rem .3rem;
+                    &:hover {
+                        color: #fff;
+                    }
+                }
+            }
+            &.org_name {
+                font-size: 1.4rem;
+                margin-top: 1.8rem;
+                p {
+                    margin: 0;
+                }
             }
         }
-    }    
+    }
 }
 
 .org_list {
@@ -380,6 +420,7 @@ $areaHeightSample: 1200px;
             padding: 1.5rem 1.5rem;
             .org_areaTitle {
                 margin: 0;
+                font-size: 1.6rem;
             }
             .org_icon {
                 transform: rotate(0deg);
@@ -406,14 +447,14 @@ $areaHeightSample: 1200px;
                     text-align: left;
                     &:first-child {
                         // border-top: 1px dotted #ddd;
-                        border-top: 1px dotted;
+                        border-top: none;
                         border-top-color: $themeColor;
                     }
                     p {
                         padding: .8rem 1rem .6rem;
                         width: 100%;
                         margin: 0;
-                        font-size: 1.3rem;
+                        font-size: 1.2rem;
                         border: 4px solid #2F2F2F;
                         box-sizing: border-box;
                     }
@@ -517,7 +558,7 @@ $areaHeightSample: 1200px;
     }
     .org_areaTitle {
         text-align: left;
-        font-size: 2rem;
+        font-size: 2.4rem;
         font-weight: bold;
         color: #fff;
         padding: 1rem 1.4rem .6rem;
@@ -602,16 +643,22 @@ $areaHeightSample: 1200px;
             margin-right: 0; 
         }
     }
-    .org_writeAreaWrap {
-        // margin-top: 2rem;
-        .org_writeArea {
-            height: 300px;
+    .org_memo {
+        .org_writeAreaWrap {
+            .org_writeArea {
+                height: 300px;
+            }
+        }
+        .org_previewAreaWrap {
+            margin-top: 1rem;
+            .org_previewArea {
+                height: 300px;
+            }
         }
     }
-    .org_previewAreaWrap {
-        // margin-top: 2rem;
-        .org_previewArea {
-            height: 300px;
+    .org_memoSample {
+        .org_previewAreaWrap {
+            margin-top: 1rem;
         }
     }
 }

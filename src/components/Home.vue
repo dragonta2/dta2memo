@@ -1,9 +1,9 @@
 <template>
-    <div id="home">
+    <div id="home" class="org_home">
         <!-- <h1>{{ msg }}</h1> -->
         
         <div class="titleBox">
-            <p class="main">DTA2MEMO</p>
+            <h1 class="main">DTA2MEMO</h1>
             <p class="sub">マークダウン形式のメモ帳アプリ</p>
         </div>
 
@@ -85,6 +85,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../scss/quote.scss';
+
+.org_home {
+    margin-top: 2rem;
+}
 
 .logIn {
     margin: 2.8rem 0;
@@ -103,7 +108,7 @@ export default {
     height: 290px;
     padding: 3rem;
     // background-color: #333;
-    background-color: #e5ba05;
+    background-color: $themeColor;
     color: #fff;
     margin: 0 auto 4rem;
     display: flex;
