@@ -1,11 +1,17 @@
 //プレビューエリア /src/components/Editor.vue　内の <div class="preview markdown-body" v-html="preview()"></div>箇所用のCSSを読み込む
 @import './github-markdown.css';
 
+$themeColor: "#e5ba05";
+
+
 //全ページに効く汎用CSS指定
 html {
     font-size: 62.5%;
+    // border: 12px solid #222;    
     body {
         font-size: 1.6rem;
+        // background-color: #fff9f4;
+        // background-color: #ffefd5;
         h1 {
             font-size: 3.8rem;
             margin-bottom: 1.5rem; 
@@ -13,8 +19,11 @@ html {
         .btn {
             font-size: 1.6rem;
         }
-        .terms {
-            margin: 1.5rem 0 1rem;
+        footer {
+            margin-top: 4rem;
+            .terms {
+                margin: 1.5rem 0 1rem;
+            }
         }
     }
 }
@@ -31,7 +40,8 @@ html {
     }
 }
 
-h1, h2 {
+h1, 
+h2 {
     font-weight: normal;
 }
 

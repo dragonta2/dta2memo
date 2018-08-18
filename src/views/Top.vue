@@ -9,10 +9,6 @@
         <!-- Editor 53行目あたりのcomponentsで登録した名前 -->
         <!-- 呼び出すコンポーネントにデータを引き渡す。 属性(プロパティ）としてuserDataの内容をuserへ格納 / → src/components/Editor.vue（子コンポーネント） 内の記述 props: ['user']で受取る -->
         <Editor v-if="isLogin" v-bind:user="userData"></Editor>
-            
-        <p class="terms">
-            <router-link v-bind:to="{ name: 'terms' }">利用規約</router-link>
-        </p>
     </div>
 </template>
 

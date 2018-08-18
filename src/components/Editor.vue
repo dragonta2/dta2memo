@@ -1,12 +1,18 @@
 <template>
-    <div class="editor">
-        <div class="row flex-row justify-content-end">
+    <div class="org_editor">
+    
+        <div class="org_statusArea">
             <!-- <p v-on:click="showside = !showside">></p> -->
-            <h1>エディター画面</h1> 
+            <!-- <h1>エディター画面</h1>  -->
             <!-- googleアカウント userデータ内のdisplayNameというキーに格納されたログイン名を取得 -->
-            <p class="name col-3 align-self-center">ユーザーネーム：{{ user.displayName }}</p>
-            <p class="logOut col-2"><button class="btn btn-outline-warning" @click="logout">ログアウト</button></p>
-        </div>
+            <div class="org_name"> 
+                <p>ユーザーネーム：{{ user.displayName }}</p>
+            </div>
+            <div class="org_logOut"> 
+                <button class="btn btn-outline-warning org_btn" @click="logout">ログアウト</button>
+            </div>
+        </div>    
+        
 
         <div class="org_list row">
             <div class="org_controlAreaWrap">
@@ -62,7 +68,7 @@
         </div><!-- /.org_list -->
         
         <div class="org_accordionPanel row">
-            <div class="org_toggleCssBox col-6">
+            <div class="org_toggleCssBox col-5">
                 <input type="checkbox" id="label1" />
                 <label for="label1" v-on:click="toggleWriteArea"><i class="org_iconPen fa fa-pencil-square-o"></i><span>記述エリア</span>
                 </label>
@@ -79,7 +85,7 @@
         <div class="org_memo row">
             <!-- v-modelでinputやtextareaの状態をコンポーネントのデータmarkdownの中へ格納する データバインディング -->
             <transition name="org_slide-fade">
-                <div class="org_writeAreaWrap col-lg-6" v-show="showWriteArea">
+                <div class="org_writeAreaWrap col-lg-7" v-show="showWriteArea">
                     <h2 class="org_areaTitle">記述エリア</h2>
                     <textarea class="org_writeArea" v-model="memos[selectedIndex].markdown" ref="markdown"></textarea>
                 </div>
@@ -87,37 +93,37 @@
 
             <!-- v-htmlで指定されたpreview()関数の実行結果がHTMLとして描画される XSSの原因になるのでユーザー間で共有するようなものを作る場合は注意 -->
             <!-- 三項演算子でclassの付与を振り分け -->
-            <div class="org_previewAreaWrap" v-bind:class="[showWriteArea === true ?'col-lg-6' : 'col-lg-12']">
+            <div class="org_previewAreaWrap" v-bind:class="[showWriteArea === true ?'col-lg-5' : 'col-lg-12']">
                 <h2 class="org_areaTitle">プレビューエリア</h2>
                 <div class="org_previewArea markdown-body" v-html="preview()"></div>
             </div>
-        </div>
+        </div><!-- /.org_memo -->
 
         <div class="org_memoSample">
             <!-- v-modelでinputやtextareaの状態をコンポーネントのデータmarkdownの中へ格納する データバインディング -->
             <transition name="org_slide-fade-up">
                 <div class="org_accordionSample row" v-show="showSampleArea">
-                    <div class="org_writeAreaWrap col-lg-6">
-                            <h2 class="org_areaTitle">マークダウンサンプル 記述エリア</h2>
+                    <div class="org_writeAreaWrap col-lg-7">
+                            <h2 class="org_areaTitle">サンプル 記述エリア</h2>
                             <textarea class="org_writeArea" v-model="memos[0].markdown" ref="markdown"></textarea>
                     </div>
                     <!-- v-htmlで指定されたpreview()関数の実行結果がHTMLとして描画される XSSの原因になるのでユーザー間で共有するようなものを作る場合は注意 -->
-                    <div class="org_previewAreaWrap col-lg-6">
-                        <h2 class="org_areaTitle">マークダウンサンプル プレビューエリア</h2>
+                    <div class="org_previewAreaWrap col-lg-5">
+                        <h2 class="org_areaTitle">サンプル プレビューエリア</h2>
                         <div class="org_previewArea markdown-body" v-html="previewSample()"></div>
                     </div><!-- /.org_previewAreaWrap -->
                 </div>
             </transition>
-                
-        </div>
-
+        </div><!-- /.org_memoSample -->
     </div>
 </template>
 
 <script>
 //npmでインストールしたマークダウン書式 → HTML変換してくれるnpmモジュールのmarkedを import 登録したい名前 from '読み込みたいモジュール名' これで登録して読み込む
+
 // import marked from 'marked';
 import markdown from '../lib/markdown';
+// src/assets/sample.jsに書かれているサンプル用の記述を「sampleMarkdown」という名前で呼び出し
 import sampleMarkdown from '../assets/sample';
 
 
@@ -125,6 +131,7 @@ export default {
     // つけたname: editorは今回は使用していなそう。。
     name: 'editor',
     // src/views/Top.vue（親コンポーネント）内の記述 <Editor>コンポーネントタグからEditor.vue内へ変数userのデータをprops downで受取る
+    
     //props:['user'] 親コンポーネントから受け継ぐデータを定義
     props: ['user'],
     
@@ -132,7 +139,9 @@ export default {
         return {
              // メモを複数保存するための配列
              memos:[
-                 // markdownというキーにマークダウンで記述されたテキストが入る
+                 // markdownというキーの中にマークダウンで記述されたテキストが値として入る
+
+                 // import sampleMarkdown from '../assets/sample';　これをmemos.markdown[0]として出力
                  { markdown: sampleMarkdown }
              ],
              // 編集・プレビューしているデータの配列番号（インデックス）が入る
@@ -166,13 +175,42 @@ export default {
         });
     },
     //ライフサイクルフック コンポーネントの描画完了時
+    // mounted: function(){
+    //     this.focusMemo(); 
+    //     document.onkeydown = e => {
+    //         // 関数内のeはキーボードの押下されたイベント自体で、そのイベントの.metaKeyでControlキーが押されているかチェック、e.keyで同時にsキーも押されているかチェックしている。
+    //         // var skey = event.keyCode(83);
+    //         if(e.key == 's' && e.metaKey){
+    //             this.saveMemos();
+    //             return false;
+    //         }
+    //     };
+    // },
     mounted: function(){
         this.focusMemo(); 
         document.onkeydown = e => {
             // 関数内のeはキーボードの押下されたイベント自体で、そのイベントの.metaKeyでControlキーが押されているかチェック、e.keyで同時にsキーも押されているかチェックしている。
+            // var skey = event.keyCode(83);
             if(e.key == 's' && e.metaKey){
                 this.saveMemos();
                 return false;
+            } else if (e.key ==  'Backspace' && e.metaKey){
+                this.deleteMemo();
+                return false;
+            } else if (e.key ==  ';' && e.metaKey){
+                this.addMemo();
+                return false;
+            } else if (e.key ==  'ArrowUp' && e.altKey){
+                // if (this.selectedIndex > 0 && this.memos.length > 0) {
+                //     this.selectMemo(this.selectedIndex - 1);
+                //     return false;
+                // }
+                this.selectMemo(this.selectedIndex - 1);
+            } else if (e.key ==  'ArrowDown' && e.altKey){
+                if (this.selectedIndex < this.memos.length - 1) {
+                    this.selectMemo(this.selectedIndex + 1);
+                    return false;
+                }
             }
         };
     },
@@ -296,22 +334,36 @@ export default {
 
 <!-- scopedをつけると自動的にhtmlの各タグに個別の属性値を割り当ててくれその属性値にのみCSSが効くようになる -->
 <style lang="scss" scoped>
+@import '../scss/quote.scss';
 
-$areaHeight: 400px;
+$areaHeight: 800px;
 $areaHeightSample: 1200px;
 
-.name {
-    font-size: 1.8rem;
-}
-.logOut {
-    margin: 2.8rem 0 3.6rem;
-    button {
-        font-size: 2rem;
-        padding: .8rem 1.2rem;
-        &:hover {
-            color: #fff;
+.org_statusArea {
+    border-bottom: 1px solid $themeColor;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .org_name {
+        font-size: 1.6rem;
+        margin-right: 2.5rem;
+        p {
+            margin: 0;
         }
     }
+    .org_logOut {
+        margin: 0;
+        text-align: right;
+        .org_btn {
+            font-size: 1.6rem;
+            padding: .6rem 1rem .4rem;
+            &:hover {
+                color: #fff;
+            }
+        }
+    }    
 }
 
 .org_list {
@@ -345,7 +397,9 @@ $areaHeightSample: 1200px;
                 margin: 0;
                 li {
                     width: 100%;
-                    border-bottom: 1px dotted #ddd;
+                    border-bottom: 1px dotted;
+                    // border-bottom-color: #ddd;
+                    border-bottom-color: $themeColor;
                     margin: 0;
                     text-align: left;
                     &:first-child {
@@ -359,7 +413,9 @@ $areaHeightSample: 1200px;
                         font-size: 1.3rem;
                     }
                     p[data-selected="true"] {
-                        border: 3px solid #d9d9d9;
+                        border: 3px solid;
+                        // border-color: #d9d9d9;
+                        border-color: $themeColor;
                     }
                 }
             }
@@ -381,11 +437,7 @@ $areaHeightSample: 1200px;
 
 .org_accordionPanel {
     cursor: pointer;
-    // margin-top: 8rem;
-    // margin: 2rem 2rem 0;
     width: 100%;
-    // border-top: 1px dotted #ddd;
-    // padding-top: 3rem;
         .org_toggleCssBox {
             display: flex;
             justify-content: center;
