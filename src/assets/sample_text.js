@@ -1,4 +1,4 @@
-export default `−マークダウン記法サンプル
+export default `−SAMPLE マークダウン記法
 
 # 見出し h1
 ## 見出し h2
