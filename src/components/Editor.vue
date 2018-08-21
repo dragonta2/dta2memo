@@ -172,7 +172,7 @@ export default {
             //はじめて作成された時は結果がnullなのでif文で追加データがあった場合のみにmemosを上書きする
             if(result.val()){
                 this.memos = result.val();
-                this.focusMemo();
+                // this.focusMemo();
             }
         });
     },
@@ -189,7 +189,7 @@ export default {
     //     };
     // },
     mounted: function(){
-        this.focusMemo(); 
+        // this.focusMemo(); 
         document.onkeydown = e => {
             // 関数内のeはキーボードの押下されたイベント自体で、そのイベントの.metaKeyでControlキーが押されているかチェック、e.keyで同時にsキーも押されているかチェックしている。
             // var skey = event.keyCode(83);
@@ -203,11 +203,11 @@ export default {
                 this.addMemo();
                 return false;
             } if (e.key ==  'ArrowUp' && e.altKey){
-                // if (this.selectedIndex > 0 && this.memos.length > 0) {
-                //     this.selectMemo(this.selectedIndex - 1);
-                //     return false;
-                // }
-                this.selectMemo(this.selectedIndex - 1);
+                if (this.selectedIndex > 0 && this.memos.length > 0) {
+                    this.selectMemo(this.selectedIndex - 1);
+                    return false;
+                }
+                // this.selectMemo(this.selectedIndex - 1);
             } if (e.key ==  'ArrowDown' && e.altKey){
                 if (this.selectedIndex < this.memos.length - 1) {
                     this.selectMemo(this.selectedIndex + 1);
@@ -233,8 +233,6 @@ export default {
 
             this.selectedIndex = this.memos.length - 1;
             // this.focusMemo();
-            this.plusHeight();
-            //var plusHeight = this.style.height + '38px';
         },
         /*deleteMemo: function(){
             const title = this.displayTitle(this.memos[this.selectedIndex].markdown);
@@ -261,12 +259,12 @@ export default {
                 )){
                     // splice 配列の任意の位置からデータを取り出す（削除） splice(選択されているインデックス番号,1つの要素を取り出す)
                     this.memos.splice(this.selectedIndex,1);
-                    this.selectedIndex--;
-                    // もし選択されているインデックス番号が0よりも大きかったら
-                    // if (this.selectedIndex > 0) {
-                    //     // 選択されているインデックス番号から1マイナスする
-                    //     this.selectedIndex--;
-                    // }
+                    // this.selectedIndex--;
+                    //もし選択されているインデックス番号が0よりも大きかったら
+                    if (this.selectedIndex > 0) {
+                        // 選択されているインデックス番号から1マイナスする
+                        this.selectedIndex--;
+                    }
                 }
             }
         },
@@ -287,7 +285,7 @@ export default {
         // 発火された（この場合クリック）配列のindex番号を取得してselectedIndexに代入
         selectMemo: function(index){
             this.selectedIndex = index;
-            //this.focusMemo();
+            // this.focusMemo();
         },
         focusMemo: function(){
             this.$nextTick(() => {
@@ -325,12 +323,12 @@ export default {
         toggleSampleArea: function() {
             this.showSampleArea = !this.showSampleArea;
         },
-    },
-    computed: {
-        plusHeight: function() {
-            return 
-        }
     }
+    // computed: {
+    //     plusHeight: function() {
+    //         return 
+    //     }
+    // }
 };
 </script>
 
