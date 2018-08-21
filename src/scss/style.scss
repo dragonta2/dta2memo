@@ -1,7 +1,7 @@
 //プレビューエリア /src/components/Editor.vue　内の <div class="preview markdown-body" v-html="preview()"></div>箇所用のCSSを読み込む
 @import './github-markdown.css';
-
-$themeColor: "#e5ba05";
+// 引用scss
+@import './_quote.scss';
 
 
 //全ページに効く汎用CSS指定
@@ -12,37 +12,92 @@ html {
         font-size: 1.6rem;
         // background-color: #fff9f4;
         // background-color: #ffefd5;
-        h1 {
-            font-size: 3.8rem;
-            margin-bottom: 1.5rem; 
-        }
-        .btn {
-            font-size: 1.6rem;
-        }
-        footer {
-            margin-top: 4rem;
-            .terms {
-                margin: 1.5rem 0 2rem;
+        // font-family: 'Armata', sans-serif;
+        font-family: 'Avenir', Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            color: #2c3e50;
+        .app {
+            h1 {
+                font-size: 3.8rem;
+                margin-bottom: 1.5rem; 
             }
-            .credit {
-                background: #000;
-                color: #fff;
-                font-size: 1.1rem;
-                margin: 0;
-                padding: 1.2rem;
+            footer {
+                margin-top: 4rem;
+                text-align: center;
+                .org_terms {
+                    font-size: 1.4rem;
+                    margin: 1.5rem 0 2rem;
+                }
+                .org_credit {
+                    background: #000;
+                    color: #fff;
+                    font-size: 1.1rem;
+                    margin: 0;
+                    padding: 1.2rem;
+                }
+            }
+            .org_btn {
+                font-size: 1.5rem;
+                width: 100%;
+                background-color: transparent;
+                text-align: center;
+                white-space: nowrap;
+                vertical-align: middle;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                border: 1px solid transparent;
+                padding: .8rem;
+                line-height: 1.5;
+                border-radius: .25rem;
+                cursor: pointer;
+                transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+                &_standard {
+                    border: 1px solid #fff;
+                    // background: #fff;
+                    // color: #000;
+                    background: transparent;
+                    color: #fff;
+                    &:hover {
+                        // background: transparent;
+                        // color: #fff;
+                        background: #fff;
+                        color: #333;
+                    }
+                }
+                &_attention {
+                    border: 1px solid #fff;
+                    background: $attentionColor;
+                    color: #fff;
+                    
+                    border: 1px solid;
+                    border-color: $attentionColor;
+                    background: transparent;
+                    color: lighten($attentionColor, 7%);
+                    &:hover {
+                        // background: #fff;
+                        background: $attentionColor;
+                        // color: #000;
+                        // color: $attentionColor;
+                        color: #fff;
+                        border-color: $attentionColor;
+                        border-color: #fff;
+                    }
+                }
+            }
+            .org_bsBtnCustom {
+                font-size: 1.6rem;
+                &:hover,
+                &:active {
+                    color: #fff !important;
+                }
             }
         }
     }
 }
 
-#app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-    // margin-top: 2rem;
-}
 
 h1, 
 h2 {

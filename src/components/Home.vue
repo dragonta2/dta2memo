@@ -2,67 +2,71 @@
     <div id="home" class="org_home">
         <!-- <h1>{{ msg }}</h1> -->
         
-        <div class="titleBox">
-            <h1 class="main">DTA2MEMO</h1>
-            <p class="sub">マークダウン形式のメモ帳アプリ</p>
+        <div class="org_titleBox">
+            <h1 class="org_main">DTA2MEMO</h1>
+            <p class="org_sub">マークダウン形式のメモ帳アプリ</p>
         </div>
 
-        <p>マークダウン記法で書いた内容がリアルタイムにプレビュー</p>
+        <p class="org_read">マークダウン記法で書いた内容をリアルタイムにプレビュー</p>
         <p>googleアカウントをお持ちの方は、すぐにお使いいただけます</p>
         
-        <p class="logIn">
+        <p class="org_logIn">
             <button class="btn btn-outline-success" v-on:click="googleLogin"><i class="fa fa-google"></i>googleアカウントでログイン</button>
         </p>
 
-        <div class="discriptionArea">
+        <div class="org_discriptionArea">
             <p>シンプルな機能でさっとメモをとることだけに集中出来ます。</p>
             <!-- <p>マークダウン記法で記入でき、リアルタイムにプレビュー</p> -->
             <p>ショートカットキーにより、キーボードだけでの操作が可能</p>
         </div>
 
-        <div class="tableArea">
-            <table class="noteBook">
+        <div class="org_tableArea">
+            <table class="org_noteBook">
                 <thead>
                     <tr>
                     <th>機能</th>
-                        <td class="data">Win</td>
-                        <td class="data">Mac</td>
+                        <td class="org_data">Win</td>
+                        <td class="org_data">Mac</td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="bar" colspan="3"></td>
+                        <td class="org_bar" colspan="3"></td>
                     </tr>
                     <tr>
                         <th>保存</th>
-                        <td class="data">control + S</td>
-                        <td class="data">command + S</td>
+                        <td class="org_data">control + S</td>
+                        <td class="org_data">command + S</td>
                     </tr>
-                    <tr><td class="bar" colspan="3"></td></tr>
+                    <tr><td class="org_bar" colspan="3"></td></tr>
                     <tr>
                         <th>メモの切り替え</th>
-                        <td class="data">Alt + ↑↓</td>
-                        <td class="data">option + S</td>
+                        <td class="org_data">Alt + ↑↓</td>
+                        <td class="org_data">option + S</td>
                     </tr>
                     <tr>
-                        <td class="bar" colspan="3"></td>
+                        <td class="org_bar" colspan="3"></td>
                     </tr>
                     <tr>
                         <th>メモの追加</th>
-                        <td class="data">Control + ;</td>
-                        <td class="data">command + ;</td>
+                        <td class="org_data">Control + ;</td>
+                        <td class="org_data">command + ;</td>
                     </tr>
                     <tr>
-                        <td class="bar" colspan="3"></td>
+                        <td class="org_bar" colspan="3"></td>
                     </tr>
                     <tr>
                         <th>メモの削除</th>
-                        <td class="data">Control + Backspace</td>
-                        <td class="data">command + delete</td>
+                        <td class="org_data">Control + Backspace</td>
+                        <td class="org_data">command + delete</td>
                     </tr>
                 </tbody>
             </table>
         </div>
+
+        <p class="org_logIn org_bottom">
+            <button class="btn btn-outline-success" v-on:click="googleLogin"><i class="fa fa-google"></i>googleアカウントでログイン</button>
+        </p>
 
     </div>
 </template>
@@ -85,13 +89,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../scss/quote.scss';
+@import '../scss/_quote.scss';
 
 .org_home {
     margin-top: 2rem;
+    text-align: center;
 }
 
-.logIn {
+.org_logIn {
     margin: 2.8rem 0;
     button {
         font-size: 2rem;
@@ -103,7 +108,7 @@ export default {
     }
 }
 
-.titleBox {
+.org_titleBox {
     width: 290px;
     height: 290px;
     padding: 3rem;
@@ -115,28 +120,32 @@ export default {
     flex-flow: column wrap;
     align-items: center;
     justify-content: center;
-    .main {
+    font-family: $fontFam1;
+    .org_main {
         font-size: 3.8rem;
         padding-bottom: .5rem;
         border-bottom: 2px solid #fff;
     }
-    .sub {
+    .org_sub {
         font-size: 1.4rem;
-        padding-top: .5rem;
     }
 }
 
-.discriptionArea {
+.org_read {
+    font-size: 2.6rem;
+    font-family: $fontFam2;
+}
+
+.org_discriptionArea {
     margin-top: 4rem;
 }
 
-.tableArea {
+.org_tableArea {
     width: 80%;
     margin: 4rem auto 0;
-    .noteBook {
+    .org_noteBook {
         width: 100%;
         margin: 0 auto;
-        // width: 650px;
         border: none;
         border-top: solid 1px #666;
         border-bottom: solid 1px #666;
@@ -147,7 +156,7 @@ export default {
         text-align: center;
         thead {
             td {
-                &.data {
+                &.org_data {
                     font-weight: bold;
                     font-size: 1.8rem;
                 }
@@ -169,7 +178,7 @@ export default {
         }
         td {
             
-            &.data {
+            &.org_data {
                 width: 40%;
                 padding-left: 6rem;
                 margin: 0;
@@ -180,28 +189,27 @@ export default {
                 white-space: nowrap;
                 overflow: hidden;
             }
-            &.bar {
+            &.org_bar {
                 height: 1px;
                 width: 100%;
                 border-top: solid 1px #34495e;
                 margin: 0;
                 padding: 0;
             }
-            // &:first-child {
-            //     padding: 0 0 0 10px;
-            //     vertical-align: middle;
-            // }
         }
     }
 }
 
+.org_bottom {
+    margin-top: 5rem;
+}
 
 @media (max-width: 991px) {
-    .tableArea {
-        .noteBook {
+    .org_tableArea {
+        .org_noteBook {
             thead {
                 td {
-                    &.data {
+                    &.org_data {
                         padding-right: 6rem;
                     }
                 }
@@ -213,7 +221,7 @@ export default {
                 padding: 1rem 0 0 2rem;
             }
             td {
-                &.data {
+                &.org_data {
                     width: 100%;
                     display: block;
                     text-align: right;
