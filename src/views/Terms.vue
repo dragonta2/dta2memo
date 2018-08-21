@@ -86,20 +86,20 @@
 <!-- scopedをつけると自動的にhtmlの各タグに個別の属性値を割り当ててくれその属性値にのみCSSが効くようになる -->
 <style lang="scss" scoped>
 .termsWrap {
+    margin-top: 2rem;
     text-align: left;
     .mainTitle {
         text-align: center;
         margin-bottom: 4rem;
     }
     .termsList {
-        
         dt {
             margin-top: 2rem;
         }
     }
     .returnTop {
         text-align: center;
-        font-size: 1.8rem;
+        font-size: 2.2rem;
         margin: 3rem;
     }
 }

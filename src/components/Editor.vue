@@ -2,15 +2,13 @@
     <div class="org_editor">
     
         <header class="org_header row">
-            <!-- <p v-on:click="showside = !showside">></p> -->
-            <div class="titleBox">
-                <h1 class="main">DTA2<br>MEMO</h1>
-                <!-- <p class="sub">マークダウン形式のメモ帳アプリ</p> -->
+            <div class="org_titleBox">
+                <h1 class="org_main">DTA2<br>MEMO</h1>
             </div>
             <!-- googleアカウント userデータ内のdisplayNameというキーに格納されたログイン名を取得 -->
             <ul>
                 <li class="org_logOut"> 
-                    <button class="btn btn-outline-warning org_btn" @click="logout">ログアウト</button>
+                    <button class="btn btn-outline-warning org_bsBtnCustom" @click="logout">ログアウト</button>
                 </li>
                 <li class="org_name"> 
                     <p>ユーザーネーム：{{ user.displayName }}</p>
@@ -37,11 +35,11 @@
                         </ul>
                         <ul class="org_btnArea">
                             <li>
-                                <button class="org_addMemoBtn btn btn-outline-info" v-on:click="addMemo">メモの追加</button>
+                                <button class="org_addMemoBtn org_btn org_btn_standard" v-on:click="addMemo">メモの追加</button>
                             </li>
 
                             <li>
-                                <button class="org_saveMemoBtn btn btn-outline-info" v-on:click="saveMemos">メモの保存</button>
+                                <button class="org_saveMemoBtn org_btn org_btn_standard" v-on:click="saveMemos">メモの保存</button>
                             </li>
 
                             <!-- リストの数が2つ以上あってマークダウン記法サンプル以外が選択されている場合 -->
@@ -65,7 +63,7 @@
                             <!-- マークダウン記法サンプルが選択されている場合以外は削除ボタンを表示 -->
 
                             <li v-if="!this.selectedIndex == 0">
-                                <button class="org_deleteMemoBtn btn btn-outline-danger" v-on:click="deleteMemo">選択中のメモの削除</button>
+                                <button class="org_deleteMemoBtn org_btn org_btn_attention" v-on:click="deleteMemo">選択中のメモの削除</button>
                             </li>
                         </ul>
                     </div><!-- .org_controlArea -->
@@ -153,7 +151,7 @@ export default {
              isSaving: false,
              nonTitleText: "No TEXT",
              // アコーディオン用
-             showControlArea: true,
+             showControlArea: false,
              showWriteArea: true,
              showSampleArea: true,
         }
@@ -198,19 +196,19 @@ export default {
             if(e.key == 's' && e.metaKey){
                 this.saveMemos();
                 return false;
-            } else if (e.key ==  'Backspace' && e.metaKey){
+            } if (e.key ==  'Backspace' && e.metaKey){
                 this.deleteMemo();
                 return false;
-            } else if (e.key ==  ';' && e.metaKey){
+            } if (e.key ==  ';' && e.metaKey){
                 this.addMemo();
                 return false;
-            } else if (e.key ==  'ArrowUp' && e.altKey){
+            } if (e.key ==  'ArrowUp' && e.altKey){
                 // if (this.selectedIndex > 0 && this.memos.length > 0) {
                 //     this.selectMemo(this.selectedIndex - 1);
                 //     return false;
                 // }
                 this.selectMemo(this.selectedIndex - 1);
-            } else if (e.key ==  'ArrowDown' && e.altKey){
+            } if (e.key ==  'ArrowDown' && e.altKey){
                 if (this.selectedIndex < this.memos.length - 1) {
                     this.selectMemo(this.selectedIndex + 1);
                     return false;
@@ -338,7 +336,7 @@ export default {
 
 <!-- scopedをつけると自動的にhtmlの各タグに個別の属性値を割り当ててくれその属性値にのみCSSが効くようになる -->
 <style lang="scss" scoped>
-@import '../scss/quote.scss';
+@import '../scss/_quote.scss';
 
 $areaHeight: 800px;
 $areaHeightSample: 1200px;
@@ -346,21 +344,21 @@ $areaHeightSample: 1200px;
 .org_header {
     padding: 1rem;
     display: flex;
-    // justify-content: flex-end;
     justify-content: space-between;
     align-items: center;
-    .titleBox {
+    .org_titleBox {
         width: 8rem;
         height: 8rem;
         padding: 0 1rem;
-        // background-color: #333;
         background-color: $themeColor;
         color: #fff;
+        text-align: center;
         margin: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        .main {
+        font-family: $fontFam1;
+        .org_main {
             font-size: 1.6rem;
             // font-weight: bold;
             margin: 0;
@@ -441,8 +439,8 @@ $areaHeightSample: 1200px;
                 li {
                     width: 100%;
                     border-bottom: 1px dotted;
-                    // border-bottom-color: #ddd;
-                    border-bottom-color: $themeColor;
+                    border-bottom-color: #ddd;
+                    // border-bottom-color: $themeColor;
                     margin: 0;
                     text-align: left;
                     &:first-child {
@@ -473,10 +471,6 @@ $areaHeightSample: 1200px;
                 margin: 1.5rem 0 0;
                 width: 100%;
                 padding: 0 1rem;
-                .btn {
-                    width: 100%;
-                    padding: 1rem .5rem;
-                }
             }
         }
     }
