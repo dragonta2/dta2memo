@@ -26,11 +26,11 @@
                 <transition name="org_slide-fade-up">
                     <div class="org_controlArea" v-show="showControlArea">
                         <ul class="org_memoListArea">
-                            <!-- :data-selected="index == selectedIndex" メモのindexが現在選択されているものと一致した場合には動的にdata-selected="true"という属性がつくようになる -->
-                            <li v-for="(memo, index) in memos" @click="selectMemo(index)" v-if="memo.markdown">
-                                <p :data-selected="index == selectedIndex">{{ displayTitle(memo.markdown)}}</p>
-                                <!-- 記述エリアに何も書かれていなかったら data:内の nonTitleText: "No TEXT" を返す-->
-                                <p v-if="!memo.markdown" :data-selected="index == selectedIndex">{{ displayNonTitle(memo.markdown) }}</p>
+                            <!-- <li v-for="(memo, index) in memos" v-on:click="selectMemo(index)" v-bind:noborder="index == selectedIndex"> -->
+                                <li v-for="(memo, index) in memos" v-on:click="selectMemo(index)" v-bind:class="{ nonborder:index == selectedIndex}">
+                                <p v-if="memo.markdown" v-bind:data-selected="index == selectedIndex">{{ displayTitle(memo.markdown)}}</p>
+                             
+                                <p v-if="!memo.markdown" v-bind:data-selected="index == selectedIndex">{{ displayNonTitle(memo.markdown) }}</p>
                             </li>
                         </ul>
                         <ul class="org_btnArea">
@@ -94,30 +94,41 @@
             </div>
         </div><!-- /.org_memo -->
 
-            <div class="org_toggleCssBox">
-                <input type="checkbox" id="label2" />
+        <div class="org_toggleCssBox">
+            <input type="checkbox" id="label2" />
 
-                <label for="label2" v-on:click="toggleSampleArea"><i class="org_iconCode fa fa-code"></i><span>SAMPLE AREA</span>
-                </label>
-            </div><!-- /.org_toggleCssBox -->
+            <label for="label2" v-on:click="toggleSampleArea"><i class="org_iconCode fa fa-code"></i><span>SAMPLE AREA</span>
+            </label>
+        </div><!-- /.org_toggleCssBox -->
 
-        <div class="org_memoSample">
-            <!-- v-modelでinputやtextareaの状態をコンポーネントのデータmarkdownの中へ格納する データバインディング -->
-            <transition name="org_slide-fade-up">
-                <div class="org_accordionSample row" v-show="showSampleArea">
-                    <div class="org_writeAreaWrap col-lg-7">
-                            <h2 class="org_areaTitle">SAMPLE WRITE AREA</h2>
-                            <textarea class="org_writeArea" v-model="memos[0].markdown" ref="markdown"></textarea>
-                    </div>
-                    <!-- v-htmlで指定されたpreview()関数の実行結果がHTMLとして描画される XSSの原因になるのでユーザー間で共有するようなものを作る場合は注意 -->
-                    <div class="org_previewAreaWrap col-lg-5">
-                        <h2 class="org_areaTitle">SAMPLE PREVIEW AREAW </h2>
-                        <div class="org_previewArea markdown-body" v-html="previewSample()"></div>
-                    </div><!-- /.org_previewAreaWrap -->
+        <transition name="org_slide-fade-up">
+            <div class="org_memoSample row" v-show="showSampleArea">
+                <div class="org_writeAreaWrap col-lg-7">
+                        <h2 class="org_areaTitle">SAMPLE WRITE AREA</h2>
+                        <textarea class="org_writeArea" v-model="memos[0].markdown" ref="markdown"></textarea>
                 </div>
-            </transition>
-        </div><!-- /.org_memoSample -->
-    </div>
+                <!-- v-htmlで指定されたpreview()関数の実行結果がHTMLとして描画される XSSの原因になるのでユーザー間で共有するようなものを作る場合は注意 -->
+                <div class="org_previewAreaWrap col-lg-5">
+                    <h2 class="org_areaTitle">SAMPLE PREVIEW AREAW </h2>
+                    <div class="org_previewArea markdown-body" v-html="previewSample()"></div>
+                </div><!-- /.org_previewAreaWrap -->
+            </div>
+        </transition>
+
+        <div class="org_toggleCssBox reverse">
+            <input type="checkbox" id="label3" />
+
+            <label for="label3" v-on:click="toggleShortcutArea"><i class="org_iconKeyboard fa fa-keyboard-o"></i><span>SHORT CUT KEY</span>
+            </label>
+        </div><!-- /.org_toggleCssBox -->
+
+        <transition name="org_slide-fade-up">
+            <div class="org_editorShortcutArea" v-show="showShortcutArea">
+                <Shortcut></Shortcut>
+            </div><!-- /.org_editorShortcutArea -->
+        </transition>
+
+    </div><!-- /.org_editor -->
 </template>
 
 <script>
@@ -125,8 +136,12 @@
 
 // import marked from 'marked';
 import markdown from '../lib/markdown';
+
 // src/assets/sample.jsに書かれているサンプル用の記述を「sampleMarkdown」という名前で呼び出し
 import sampleMarkdown from '../assets/sample_text';
+
+// import 登録したい名前 from '相対パスでコンポーネント化したいvueファイル' これで登録して読み込む
+import ShortcutVue from './Shortcut.vue';
 
 
 export default {
@@ -154,6 +169,7 @@ export default {
              showControlArea: false,
              showWriteArea: true,
              showSampleArea: true,
+             showShortcutArea: false
         }
     }, 
     //ライフサイクルフック コンポーネント作成時に実行される
@@ -177,17 +193,17 @@ export default {
         });
     },
     //ライフサイクルフック コンポーネントの描画完了時
-    // mounted: function(){
-    //     this.focusMemo(); 
-    //     document.onkeydown = e => {
-    //         // 関数内のeはキーボードの押下されたイベント自体で、そのイベントの.metaKeyでControlキーが押されているかチェック、e.keyで同時にsキーも押されているかチェックしている。
-    //         // var skey = event.keyCode(83);
-    //         if(e.key == 's' && e.metaKey){
-    //             this.saveMemos();
-    //             return false;
-    //         }
-    //     };
-    // },
+    mounted: function(){
+        this.focusMemo(); 
+        document.onkeydown = e => {
+            // 関数内のeはキーボードの押下されたイベント自体で、そのイベントの.metaKeyでControlキーが押されているかチェック、e.keyで同時にsキーも押されているかチェックしている。
+            // var skey = event.keyCode(83);
+            if(e.key == 's' && e.metaKey){
+                this.saveMemos();
+                return false;
+            }
+        };
+    },
     mounted: function(){
         // this.focusMemo(); 
         document.onkeydown = e => {
@@ -287,13 +303,13 @@ export default {
             this.selectedIndex = index;
             // this.focusMemo();
         },
-        focusMemo: function(){
-            this.$nextTick(() => {
-                const markdownDom = this.$refs.markdown;
-                markdownDom.focus();
-                markdownDom.scrollTop = markdownDom.getClientRects()[0].height;
-            });
-        },
+        // focusMemo: function(){
+        //     this.$nextTick(() => {
+        //         const markdownDom = this.$refs.markdown;
+        //         markdownDom.focus();
+        //         markdownDom.scrollTop = markdownDom.getClientRects()[0].height;
+        //     });
+        // },
         preview: function(){
             return markdown(this.memos[this.selectedIndex].markdown);
         },
@@ -323,12 +339,16 @@ export default {
         toggleSampleArea: function() {
             this.showSampleArea = !this.showSampleArea;
         },
+        // アコーディオン shortcutArea用
+        toggleShortcutArea: function() {
+            this.showShortcutArea = !this.showShortcutArea;
+        }
+    },
+    //コンポーネントの登録(importさせたコンポーネントファイルを登録する)
+    components: {
+        //　登録するタグ名: importで登録している名前
+        Shortcut: ShortcutVue
     }
-    // computed: {
-    //     plusHeight: function() {
-    //         return 
-    //     }
-    // }
 };
 </script>
 
@@ -340,10 +360,11 @@ $areaHeight: 800px;
 $areaHeightSample: 1200px;
 
 .org_header {
-    padding: 1rem;
+    padding: 1.5rem 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin: 0;
     .org_titleBox {
         width: 8rem;
         height: 8rem;
@@ -413,7 +434,7 @@ $areaHeightSample: 1200px;
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            padding: 1.5rem 1.5rem;
+            padding: 1.5rem 3rem;
             .org_areaTitle {
                 margin: 0;
                 font-size: 1.6rem;
@@ -430,35 +451,40 @@ $areaHeightSample: 1200px;
         .org_controlArea {
             transition: 150ms ease-out;
             background-color: #2F2F2F;
-            padding-bottom: 1.5rem;
+            padding: 0 1.5rem 1.5rem;
             box-sizing: border-box;
             .org_memoListArea {
                 margin: 0;
+                padding: 1rem 1.5rem 0;
                 li {
                     width: 100%;
-                    border-bottom: 1px dotted;
-                    border-bottom-color: #ddd;
-                    // border-bottom-color: $themeColor;
+                    border-top: 1px dotted #ddd;
                     margin: 0;
                     text-align: left;
-                    &:first-child {
-                        // border-top: 1px dotted #ddd;
+                    &:first-of-type {
+                        border: none;
+                    }
+                    &:last-of-type {
+                        border-bottom: 1px dotted #ddd;
+                    }
+                    &.nonborder,
+                    &.nonborder + li {
                         border-top: none;
-                        border-top-color: $themeColor;
+                    }
+                    &.nonborder:last-of-type {
+                        border-bottom: none;
                     }
                     p {
+                        font-size: 1.2rem;
                         padding: .8rem 1rem .6rem;
                         width: 100%;
                         margin: 0;
-                        font-size: 1.2rem;
                         border: 4px solid #2F2F2F;
                         box-sizing: border-box;
-                    }
-                    p[data-selected="true"] {
-                        border: 4px solid;
-                        // border-color: #d9d9d9;
-                        border-color: #ddd;
-                        // border-color: $themeColor;
+                        &[data-selected="true"] {
+                            border: 4px solid;
+                            border-color: #ddd;
+                        }
                     }
                 }
             }
@@ -474,13 +500,25 @@ $areaHeightSample: 1200px;
     }
 }
 
-
 .org_toggleCssBox {
     border-top: 1px solid #777;
     border-bottom: 1px solid #777;
     padding: .6rem 2rem .2rem;
     box-sizing: border-box;
     color: #777;
+    margin: $baseVerticalMargin $widthMargin;
+    &.reverse {
+        input {
+            &:checked ~ label:after {
+                content: '\f205';
+            }
+        }
+        label {
+            &:after {
+                content: '\f204';
+            }
+        }
+    }
     /*チェックボックスは見えなくする*/
     input {
         display: none;
@@ -498,29 +536,34 @@ $areaHeightSample: 1200px;
             display: inline-block;
             content: '\f205';
             font-family: 'FontAwesome';
-            padding-left: .6rem;
-            font-size: 2.4rem;
+            padding-left: .8rem;
+            font-size: 2.5rem;
             vertical-align: middle;
         }
         .org_iconPen {
-            margin-right: .5rem;
+            margin-right: .6rem;
             font-size: 2.5rem;
             vertical-align: middle;
         }
         .org_iconCode {
             margin-right: .5rem;
-            font-size: 2rem;
+            font-size: 2.4rem;
+            vertical-align: text-bottom;
+        }
+        .org_iconKeyboard {
+            margin-right: .7rem;
+            font-size: 2.6rem;
             vertical-align: text-bottom;
         }
         span {
             vertical-align: middle;
-            font-size: 1.5rem;
+            font-size: 1.7rem;
         }
     }
 }
 
 .org_memo {
-    margin: 4rem 0; 
+    margin: 0; 
     .org_writeAreaWrap {
         .org_writeArea {
             width: 100%;
@@ -560,7 +603,7 @@ $areaHeightSample: 1200px;
 }
 
 .org_memoSample {
-    margin-top: 4rem;
+    margin: 0;
     .org_writeAreaWrap {
         .org_writeArea {
             width: 100%;
@@ -597,14 +640,18 @@ $areaHeightSample: 1200px;
     }
 }
 
+.org_editorShortcutArea {
+    margin: 4rem $widthMargin 0;
+}
+
 //transion用の指定
 // transition nameにつけた名前でトランジションクラスの名前も変更可能
-// 例）.v-enter-acitive ➡︎ .org_slide-fade-enter-active(.v-より前がつけたnameに入れ替わる)
+// 例）.v-enter-acitive ➡︎ .org_slide-fade-enter-active(.v-より前が、つけたnameに入れ替わる)
 .org_slide-fade-enter-active {
   transition: all .3s ease;
 }
 .org_slide-fade-leave-active {
-  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  transition: all .4s cubic-bezier(1.0, 0.5, 0.8, 1.0);
 }
 .org_slide-fade-enter, 
 .org_slide-fade-leave-to
@@ -613,11 +660,12 @@ $areaHeightSample: 1200px;
   opacity: 0;
 }
 
+//上下 アコーディオン用
 .org_slide-fade-up-enter-active {
   transition: all 1s ease;
 }
 .org_slide-fade-up-leave-active {
-  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  transition: all .4s cubic-bezier(1.0, 0.5, 0.8, 1.0);
 }
 .org_slide-fade-up-enter, 
 .org_slide-fade-up-leave-to
@@ -625,7 +673,6 @@ $areaHeightSample: 1200px;
   transform: translateY(-10px);
   opacity: 0;
 }
-
 
 /* width 991px 以下の場合この指定が効く */
 @media (max-width: 991px) {
