@@ -20,48 +20,8 @@
             <p>ショートカットキーにより、キーボードだけでの操作が可能</p>
         </div>
 
-        <div class="org_tableArea">
-            <table class="org_noteBook">
-                <thead>
-                    <tr>
-                    <th>機能</th>
-                        <td class="org_data">Win</td>
-                        <td class="org_data">Mac</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="org_bar" colspan="3"></td>
-                    </tr>
-                    <tr>
-                        <th>保存</th>
-                        <td class="org_data">control + S</td>
-                        <td class="org_data">command + S</td>
-                    </tr>
-                    <tr><td class="org_bar" colspan="3"></td></tr>
-                    <tr>
-                        <th>メモの切り替え</th>
-                        <td class="org_data">Alt + ↑↓</td>
-                        <td class="org_data">option + S</td>
-                    </tr>
-                    <tr>
-                        <td class="org_bar" colspan="3"></td>
-                    </tr>
-                    <tr>
-                        <th>メモの追加</th>
-                        <td class="org_data">Control + ;</td>
-                        <td class="org_data">command + ;</td>
-                    </tr>
-                    <tr>
-                        <td class="org_bar" colspan="3"></td>
-                    </tr>
-                    <tr>
-                        <th>メモの削除</th>
-                        <td class="org_data">Control + Backspace</td>
-                        <td class="org_data">command + delete</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="org_homeShortcutArea">
+            <Shortcut></Shortcut>
         </div>
 
         <p class="org_logIn org_bottom">
@@ -72,6 +32,9 @@
 </template>
 
 <script>
+// import 登録したい名前 from '相対パスでコンポーネント化したいvueファイル' これで登録して読み込む
+import ShortcutVue from './Shortcut.vue';
+
 export default {
     name: 'home',//今回つかってなさそう
     data () {
@@ -84,6 +47,11 @@ export default {
         googleLogin: function() {
             firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider());
         }
+    },
+    //コンポーネントの登録(importさせたコンポーネントファイルを登録する)
+    components: {
+        //　登録するタグ名: importで登録している名前
+        Shortcut: ShortcutVue
     }
 };
 </script>
@@ -200,36 +168,19 @@ export default {
     }
 }
 
+.org_homeShortcutArea {
+    width: 70%;
+    margin: $baseVerticalMargin auto 0;
+}
+
 .org_bottom {
     margin-top: 5rem;
 }
 
 @media (max-width: 991px) {
-    .org_tableArea {
-        .org_noteBook {
-            thead {
-                td {
-                    &.org_data {
-                        padding-right: 6rem;
-                    }
-                }
-            }
-            th {
-                width: 100%;
-                display: block;
-                border-right: none;
-                padding: 1rem 0 0 2rem;
-            }
-            td {
-                &.org_data {
-                    width: 100%;
-                    display: block;
-                    text-align: right;
-                    padding-right: 4rem;
-                    padding-bottom: 1rem;
-                }
-            }
-        }
+    .org_homeShortcutArea {
+        width: 100%;
+        padding: 0 1.5rem;
     }
 }
 </style>
